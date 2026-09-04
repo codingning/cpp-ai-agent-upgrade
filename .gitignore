@@ -1,0 +1,11 @@
+work/*
+!work/.gitkeep
+*.dmp
+*.exe
+*.dll
+*.lib
+*.pdb
+*.key
+*.pem
+*.token
+*.cookie
