@@ -14,6 +14,10 @@
 
 把答案写入今天的 history 草稿；不确定也要保留原答案。
 
+## 核心任务（不超过 60 分钟）
+
+今天只要求完成：三个闭卷预测、`python scripts/doctor.py` 环境检查、一个最小 C++ smoke test。若时间不足，完成前三项中的前两项也可以，记录真实阻塞即可。
+
 ## 环境基线（10 分钟）
 
 在 Windows 的 Visual Studio Developer PowerShell 中运行：
@@ -26,7 +30,7 @@ python scripts/doctor.py
 
 记录 MSVC、CMake、CTest、Git 和 WSL2 是否可用。工具缺失就是今天的真实阻塞，不跳过、不伪造后续结果。
 
-## 主资料（10 分钟）
+## 主资料（10 分钟，可选）
 
 只阅读与以下问题直接相关的章节：
 
@@ -35,7 +39,7 @@ python scripts/doctor.py
 
 阅读后用自己的话回答：所有权是什么、析构为什么是错误路径的一部分、裸指针什么时候只能表示观察关系。不要复制资料原文。
 
-## 源码切片（20 分钟）
+## 源码切片（20 分钟，可选）
 
 使用 `references/source-manifest.yml` 中固定的 Microsoft WIL commit，只定位 `include/wil/resource.h` 中一个 handle wrapper 相关的定义：
 
@@ -44,11 +48,11 @@ python scripts/doctor.py
 - 说明删除器在什么时候调用；
 - 写下一个看不懂的细节，不继续无限展开。
 
-## Smoke test（5 分钟）
+## Smoke test（5 分钟，核心）
 
 创建并编译 `labs/week01/toolchain_smoke.cpp`，只需证明当前 MSVC 编译命令和程序运行有效。不要在今天提前实现完整 RAII wrapper。
 
-## 复述与记录（10 分钟）
+## 复述与记录（5 分钟，核心）
 
 - 保存工具检查和 smoke test 的命令与结果；
 - 用自己的话解释 RAII 为什么覆盖错误路径，以及 move 前后谁拥有资源；
@@ -59,9 +63,9 @@ python scripts/doctor.py
 
 - 完成三个“原始预测 → 资料/源码结论 → 尚待实验验证”对照；
 - Windows 必需工具状态已记录；
-- 能定位并初步解释一个 WIL 源码切片；
+- （可选）能定位并初步解释一个 WIL 源码切片；
 - smoke test 使用 MSVC 编译并运行；
-- 能在两分钟内不看资料解释 RAII、所有权和移动；
+- （可选）能在两分钟内不看资料解释 RAII、所有权和移动；
 - 未完成时只记录已完成阶段和阻塞，不补写掌握结论。
 
 ## 完成后

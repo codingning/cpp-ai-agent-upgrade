@@ -14,13 +14,15 @@
 
 ## 七个最低单元
 
+第一周按“由易到难”的降级路径执行：先用假资源建立生命周期模型，再实现最小 move-only 资源句柄，最后才接触 WIL 和真实 Windows handle。WIL 是优秀实现对照，不是 Day 1 的理解门槛。
+
 ### Day 1：工具链与问题建立
 
-运行 `python scripts/doctor.py`；确认 VS 2022 Developer PowerShell 中能找到 MSVC、CMake、CTest、Git，记录 WSL2 状态。阅读 Core Guidelines R.1 和 WIL 一个窄切片，画所有权状态图。只写并编译一个 smoke test，不实现资源包装器。
+**核心**：运行 `python scripts/doctor.py`；确认 VS 2022 Developer PowerShell 中能找到 MSVC、CMake、CTest、Git，写三个闭卷预测，并编译一个 smoke test。**可选**：阅读 Core Guidelines R.1；只定位 WIL 的一个窄切片，不要求理解 `resource.h` 的模板细节。今天不实现资源包装器。
 
 ### Day 2：错误基线
 
-用假资源和计数 deleter 复现泄漏、double-close、提前返回三种错误。测试必须能先失败，再保留修正前后的证据；不要用真实危险资源制造破坏。
+**核心**：用假资源和计数 deleter 复现泄漏、double-close、提前返回三种错误中的至少两种。**可选**：补齐第三种并保留修正前后的证据；不要用真实危险资源制造破坏。
 
 ### Day 3：最小 RAII
 
@@ -49,3 +51,7 @@
 - 创建失败、提前返回、异常、移动和重复 reset 均有证据；
 - 能指出 WIL 固定 commit 中对应设计位置；
 - 对象生命周期从 L1 提升为 L2 候选，7 天复测通过后确认。
+
+## 难度控制与通用能力保留
+
+如果某日出现连续 15 分钟无法推进、编译环境缺失或源码阅读超出当前基础，立即退回上一层：假资源 → 标准库自定义 deleter → 最小 wrapper → WIL 对照。推理运行时是应用场景，不替代通用高级 C++ 训练；对象模型、STL、并发、错误模型、构建、调试、网络、ABI 和设计取舍仍按能力矩阵独立验收。
