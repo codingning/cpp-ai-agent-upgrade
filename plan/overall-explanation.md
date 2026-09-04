@@ -8,7 +8,28 @@
 
 1. **基础层（第 1–4 周）**：生命周期、RAII、拷贝/移动、STL、算法、C++11 并发。每个主题都要有最小代码、测试和错误复盘。
 2. **工程层（第 5–8 周）**：线程池、取消、关闭、CMake、GoogleTest、Sanitizer、Benchmark、Windows 进程/句柄/崩溃分析。
-3. **AI 基础设施层（第 9–12 周及以后）**：Protobuf/gRPC、SQLite、工具调用 Agent、MCP、ggml/llama.cpp、Electron + C++ 工作台。
+3. **现代 C++ 与 AI 基础设施层（第 7–12 周及以后）**：先系统补 C++17，再选择性落地 C++20，随后进入 Protobuf/gRPC、SQLite、工具调用 Agent、MCP、ggml/llama.cpp 和 Electron + C++ 工作台。
+
+## C++17 / C++20 专项路径
+
+### C++17：先建立稳定的日常工程能力
+
+- 语言：结构化绑定、`if constexpr`、折叠表达式、类模板参数推导；
+- 库：`std::string_view`、`std::optional`、`std::variant`、`std::any`、`std::filesystem`；
+- 工程：异常/错误返回边界、路径处理、类型分支和接口表达；
+- 验收：每项至少一个最小程序、一个边界测试和一段口头解释；
+- 约束：先掌握语义，再讨论编译器支持，不把“能编译”当作掌握。
+
+### C++20：在 C++11/17 稳定后逐步引入
+
+- 类型系统：`concepts`、`requires`；
+- 范围：`ranges`、视图和惰性求值；
+- 并发：`jthread`、`stop_token`、信号量/闩锁/屏障；
+- 编译期：`consteval`、`constinit`；
+- 其他：三路比较、协程机制、modules 的设计目标和当前工具链边界；
+- 验收：至少完成 concepts、ranges、jthread 三个可运行实验，并将 `stop_token` 接入线程池关闭测试；
+- 降级：时间不足时先完成 concepts + ranges + jthread，协程和 modules 延后；
+- 升级：提前完成时增加协程任务调度器和不同 MSVC/Clang 配置的编译对照。
 
 ## 每日循环
 
