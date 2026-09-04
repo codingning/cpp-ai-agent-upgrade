@@ -22,7 +22,7 @@ pwsh ./scripts/new-day.ps1
 
 - `plan/baseline.md`：当前能力基线与证据状态
 - `plan/roadmap-12-weeks.md`：12 周路线和阶段门禁
-- `plan/roadmap-6-12-months.md`：长期路线
+- `plan/roadmap-6-12-months.md`：长期路线（含 C++17/20、Agent Runtime、AI 基础设施、设计模式和近期岗位时效校准）
 - `plan/project-selection.md`：训练营项目对标与半年主副项目选择
 - `plan/gap-audit-design-patterns-and-jobs-2026-09-05.md`：设计模式与岗位要求缺口审计
 - `assessment/`：闭卷测评记录与后续测评题

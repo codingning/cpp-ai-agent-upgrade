@@ -6,16 +6,20 @@
 
 每天最低 1 小时，按 24 周滚动推进。没有学习的日子只记录缺席，不追赶；有空时再补最小未完成单元。
 
+## 岗位证据校准规则
+
+岗位调研只统计北京及目标城市中可核验的近期样本：优先“一周内招聘者活跃”，其次“一个月内仍有活跃信号”；必须确认页面仍显示“招聘中”。仅有搜索引擎摘要、无活跃时间、已关闭或疑似长期复用的职位，只作为背景材料，不作为能力需求的计数依据。每四周复核一次岗位关键词，避免路线被过时 JD 带偏。
+
 ## 24 周分段
 
 | 周次 | 阶段 | 必须产出 | 进入下一阶段门禁 |
 |---|---|---|---|
-| 1–4 | C++11 基础重建 | RAII、拷贝/移动、STL、算法实验集 | 10 个最小测试通过；能解释生命周期和复杂度 |
-| 5–8 | 并发与工程化 | 线程安全队列、线程池、取消/关闭、CMake、GoogleTest、Sanitizer、Benchmark | 任务可回收；重复压力测试无数据竞争/泄漏证据 |
-| 9–12 | C++17/20 与 Windows | filesystem/optional/variant、concepts/ranges、jthread/stop_token、Windows 句柄/进程/转储 | 6 个标准特性实验；至少一个 Windows 故障复现和修复报告 |
-| 13–16 | 主项目一期：PR Agent/本地工具 Agent | 工具注册、权限、diff 解析、任务调度、结构化输出 | 离线可运行；恶意输入、超时、取消、失败重放测试通过 |
-| 17–20 | 主项目二期：协议与架构 | MCP 或 Protobuf/gRPC 接口、SQLite 状态、可观测性、性能基线 | 有架构图、ADR、接口契约、基准数据和回滚方案 |
-| 21–24 | 副项目：mini-llama.cpp 切片与总验收 | 张量/Tokenizer/前向/KV Cache 至少两项；对照 llama.cpp | 固定 commit；能构建、测试、对照性能并解释取舍 |
+| 1–4 | C++11 基础重建与对象模型 | RAII、拷贝/移动、STL、算法实验集；Factory/Builder/RAII 资源封装 | 10 个最小测试通过；能解释生命周期、复杂度和所有权 |
+| 5–8 | 并发、可靠性与工程化 | 线程安全队列、线程池、取消/关闭、超时/重试/幂等、CMake、GoogleTest、Sanitizer、Benchmark | 压测无数据竞争/泄漏；任务可取消、可回收、可重放 |
+| 9–12 | C++17/20、Windows 与系统边界 | filesystem/optional/variant、structured bindings、折叠表达式、concepts/ranges、jthread/stop_token；Windows 句柄/进程/转储；DLL/API/ABI/ODR | 8 个标准特性实验；完成一次崩溃复现、修复和 ABI 边界报告 |
+| 13–16 | 主项目一期：PR Agent/本地 Agent Runtime | Tool Registry、Adapter、Strategy、Command、State、Pipeline；权限、diff 解析、任务调度、结构化输出、RAG/Workflow 接口 | 离线可运行；恶意输入、超时、取消、失败重放和审计测试通过 |
+| 17–20 | 主项目二期：协议、分布式可靠性与可观测性 | MCP 或 Protobuf/gRPC、SQLite 状态、事件/消息、限流/熔断/背压、结构化日志、指标、trace、崩溃转储 | 有架构图、ADR、接口契约、SLO/性能基线、故障注入和回滚方案 |
+| 21–24 | 副项目：mini-llama.cpp 切片与总验收 | 张量/Tokenizer/前向/KV Cache 至少两项；内存/缓存/量化或 SIMD 对照；对照 llama.cpp | 固定 commit；能构建、测试、Benchmark，并解释 C++/Python 和推理取舍 |
 
 ## 训练营项目对标
 
@@ -41,6 +45,12 @@
 - 接口、错误模型、取消/超时和关闭协议；
 - 测试矩阵、故障注入、性能基线和已知限制；
 - 一次 20 分钟口头设计说明，能够回答容量、尾延迟、恢复、权限和演进问题。
+
+## 设计模式与岗位闭环
+
+设计模式不单独背诵，必须在项目中留下“问题—约束—模式—替代方案—成本—测试”的记录。核心覆盖：Factory/Builder、Adapter/Facade、Strategy、Command、State、Observer、Chain of Responsibility、Pipeline、Thread Pool、Tool Registry、Middleware、Retry/Bulkhead/Circuit Breaker、Plugin 和 Event Bus；同时记录过度抽象、隐式线程、全局单例等反模式。
+
+每四周完成一次近期岗位抽样复盘：标记岗位状态、活跃时间、技能关键词、对应项目证据和当前缺口。岗位调研的结果只能调整后续训练优先级，不能替代代码、测试和性能证据。
 
 ## 简历验收
 
