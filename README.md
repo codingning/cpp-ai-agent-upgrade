@@ -23,6 +23,7 @@ pwsh ./scripts/new-day.ps1
 - `plan/baseline.md`：当前能力基线与证据状态
 - `plan/roadmap-12-weeks.md`：12 周路线和阶段门禁
 - `plan/roadmap-6-12-months.md`：长期路线
+- `plan/project-selection.md`：训练营项目对标与半年主副项目选择
 - `assessment/`：闭卷测评记录与后续测评题
 - `daily/current.md`：当天任务和验收标准
 - `daily/progress.jsonl`：每日真实进度（不写入密钥或私密资料）
