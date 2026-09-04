@@ -1,5 +1,13 @@
 # C++ 能力基线（2026-09-04）
 
+## 已确认目标
+
+- 半年形成可求职、可展示的 C++ AI 推理基础设施工程证据；
+- 第一目标岗位：C++ AI 推理基础设施；第二目标岗位：高级 C++ 开发工程师；
+- 主训练环境：Windows/MSVC；保留 WSL2/Linux 构建和 Benchmark 兼容线；
+- 时间预算：每天最低 1 小时，缺席不追赶；
+- 学习顺序：闭卷诊断 → 一手概念资料 → 定向优秀源码 → 最小实验/修改 → 测试与性能 → 复述和证据。
+
 ## 证据等级
 
 - **直接工程证据**：知识库记录了真实 Chromium 132 Windows 构建、`content_unittests`、`WebContentsUserData` 生命周期实验和 `WaitableEvent` DCHECK 诊断。
@@ -18,7 +26,8 @@
 | 算法 | 能识别平方复杂度和优化方向，编码不足 | 每周 2 个可测函数 |
 | 编译工程 | 声明/定义/链接已验证 | CMake、测试、Sanitizer、Benchmark |
 | Windows/Chromium | 有直接案例，但复述链不稳定 | 复现并写证据链 |
-| Agent 架构 | 能列模块，安全/状态/可观测性粗略 | 离线工具调用 Agent |
+| 推理基础设施 | 未验证 tensor/算子/量化/KV Cache/runtime 性能能力 | ORT/llama.cpp 基线与局部修改 |
+| Agent 架构 | 能列模块，安全/状态/可观测性粗略 | 作为 runtime 的后期展示层 |
 
 ## AI 使用协议
 

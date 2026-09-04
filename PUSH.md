@@ -1,8 +1,8 @@
 # GitHub 推送状态
 
-本地提交：`a2411dc Add adaptive C++ AI agent upgrade plan`
+远端仓库：<https://github.com/codingning/cpp-ai-agent-upgrade>
 
-仓库已创建并完成首次推送：<https://github.com/codingning/cpp-ai-agent-upgrade>
+不要在此文件硬编码“最新提交”；恢复环境时使用 `git status -sb`、`git log -1 --oneline` 和 `git remote -v` 获取当前事实。
 
 如需在新环境重新绑定远端，可执行：
 

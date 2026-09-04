@@ -1,5 +1,12 @@
 work/*
 !work/.gitkeep
+build/
+out/
+.vs/
+__pycache__/
+*.pyc
+.pytest_cache/
+CMakeUserPresets.json
 *.dmp
 *.exe
 *.dll

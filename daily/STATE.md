@@ -4,24 +4,30 @@
 
 1. `README.md`
 2. `plan/baseline.md`
-3. `plan/roadmap-12-weeks.md`
-4. `daily/STATE.md`
-5. `daily/current.md`
-6. `daily/progress.jsonl` 和最近 3 份 `daily/history/*.md`
+3. `plan/learning-loop.md`
+4. `plan/competency-matrix.md`
+5. `plan/roadmap-12-weeks.md`
+6. `daily/STATE.md`
+7. `daily/current.md`
+8. `daily/progress.jsonl`（若存在）和最近 3 份 `daily/history/*.md`
 
 ## 当前状态
 
-- 当前阶段：第 1 周，生命周期、RAII、拷贝/移动和基础算法
+- 当前阶段：第 1 周，生命周期、RAII、所有权和错误路径
 - 当前日期：2026-09-04
-- 今日状态：未进行 C++ 训练；已完成训练系统落地
-- 下一步：完成 `daily/current.md` 的最低单元；完成后写每日记录并更新下一日任务
+- 今日状态：未进行 C++ 训练；已完成训练系统 v2 校准，本人训练尚未开始
+- 当前能力门禁：对象生命周期 L1 → 目标 L2
+- 下一步：完成 `daily/current.md` 的“生命周期与 RAII：A 日”最低闭环；完成后写每日记录并安排 B 日
 - 最近一次门禁：尚未完成
+- 下一次复测：首次通过后第 7 天和第 21 天
 
 ## 续训规则
 
 - 先检查 `git status -sb`，保护用户已有未提交改动。
 - 只依据仓库中的记录判断已掌握内容；“看过”不等于“掌握”。
+- 每个单元遵循诊断 → 主资料 → 源码切片 → 实现 → 验证 → 复述；困难主题使用三日循环。
 - 每日记录必须使用中文，包含完成任务、训练内容、掌握部分、未掌握/阻塞、证据、下一日计划。
 - 无学习日也必须写记录，明确“今日未学习”，不新增虚构能力结论。
 - 每次记录后更新 `current.md` 和本文件的当前状态，再提交并推送。
 - 推送失败必须明确记录失败，不把本地提交当作远端成功。
+- 只有通过 7 天复测后才可以稳定提升能力等级；只有 L4 证据可以进入简历。

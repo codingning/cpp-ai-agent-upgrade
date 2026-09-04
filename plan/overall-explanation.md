@@ -2,13 +2,13 @@
 
 ## 目标
 
-目标不是背完 C++ 题库，而是把已有 Windows/Chromium 工程经验转化为可迁移、可解释、可测试、能独立完成的现代 C++ 与 AI 基础设施能力。
+目标不是背完 C++ 题库，而是把已有 Windows/Chromium 工程经验转化为可迁移、可解释、可测试、能独立完成的现代 C++ 与 AI 推理基础设施能力。主项目是 Windows inference runtime workbench，Agent 是调用它的展示层。
 
 ## 三层推进
 
 1. **基础层（第 1–4 周）**：生命周期、RAII、拷贝/移动、STL、算法、C++11 并发。每个主题都要有最小代码、测试和错误复盘。
 2. **工程层（第 5–8 周）**：线程池、取消、关闭、CMake、GoogleTest、Sanitizer、Benchmark、Windows 进程/句柄/崩溃分析。
-3. **现代 C++ 与 AI 基础设施层（第 7–12 周及以后）**：先系统补 C++17，再选择性落地 C++20，随后进入 Protobuf/gRPC、SQLite、工具调用 Agent、MCP、ggml/llama.cpp 和 Electron + C++ 工作台。
+3. **现代 C++ 与推理基础设施层（第 7–12 周及以后）**：把 C++17/20 用到 tensor、内存规划、算子、量化、Tokenizer、KV Cache、调度和 Windows 部署；Agent/MCP 只在 runtime 可用后作为应用层。
 
 ## C++17 / C++20 专项路径
 
@@ -33,7 +33,7 @@
 
 ## 每日循环
 
-闭卷思考 → AI 辅助 → 独立重写关键代码 → 编译/测试 → 记录证据 → 更新下一日任务。时间不固定时只保证最低单元，不用固定日历强行追赶。
+闭卷诊断 → 阅读一份主资料 → 追一个源码切片 → 闭卷实现 → 测试/诊断/Benchmark → 复述 → 7/21 天复测。AI 在首次实现后参与 Review 和反例生成。时间不固定时只保证最低单元，不用固定日历强行追赶。
 
 ## 可写入简历的能力门槛
 
@@ -49,11 +49,11 @@
 
 ## 项目作品梯度
 
-- P1：线程池/任务运行时，证明基础并发和资源回收；
-- P2：本地工具调用 Agent，证明工具治理、取消和可观测性；
-- P3：MCP Server/Client，证明协议和并发请求处理；
-- P4：Git diff 代码审查 Agent，证明结构化输出、证据引用和人工审批；
-- P5：mini-llama.cpp 与 Electron + C++ 工作台，证明 AI 底层和桌面集成能力。
+- P1：RAII、tensor/arena、线程池和算子实验，证明高级 C++ 底座；
+- P2：Windows inference runtime workbench，证明运行时、性能、调试和架构能力；
+- P3：固定 commit 的 llama.cpp/ONNX Runtime 源码对照，证明阅读和迁移能力；
+- P4：本地 Agent 展示层，证明 runtime 接口、工具治理和结构化输出；
+- P5：Windows 打包、性能报告和项目答辩，形成求职作品集。
 
 每个项目都必须固定版本、核对许可证、保留测试和性能报告；无许可证或无法复现的仓库只作阅读参考。
 

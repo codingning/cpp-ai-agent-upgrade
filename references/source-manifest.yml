@@ -1,0 +1,28 @@
+schema_version: 1
+last_verified: 2026-09-04
+sources:
+  - id: microsoft-wil
+    url: https://github.com/microsoft/wil
+    commit: 7fb2e758661149f4dea303401f1c2d8d933bcae2
+    license: MIT
+    use: Windows RAII and resource-wrapper source reading
+  - id: onnxruntime
+    url: https://github.com/microsoft/onnxruntime
+    commit: d47fd8824ab29b86308e1c24ebd067d29713ae7b
+    license: MIT
+    use: general graph runtime, Execution Provider, memory and scheduling study
+  - id: llama-cpp
+    url: https://github.com/ggml-org/llama.cpp
+    commit: 86b351fd64d5ebbf1ba795ffd60c8f4a8c958613
+    license: MIT
+    use: LLM model/context, KV cache, batching, quantization and benchmark study
+  - id: googletest
+    url: https://github.com/google/googletest
+    commit: 283c17563fe7a1111cd7f581aa5d541e8baeff2f
+    license: BSD-3-Clause
+    use: test framework
+
+notes:
+  - Commits are reproducibility snapshots, not claims that HEAD is a stable release.
+  - Recheck upstream license and security state before adopting a dependency.
+  - Model weights, datasets and third-party kernels require separate license records.

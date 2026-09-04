@@ -1,8 +1,8 @@
-# 半年路线图：高级 C++ 工程能力与初步架构能力
+# 半年路线图：Windows C++ AI 推理基础设施与高级工程能力
 
 ## 目标边界
 
-半年目标不是保证职位头衔，而是达到一组可核验的能力证据：能独立设计、实现、测试、调试和解释中等规模 C++ 系统；能做模块边界、并发模型、错误处理、可观测性、性能和演进取舍；能交付至少一个完整主项目和一个底层专项项目。
+半年目标不是保证职位头衔，而是达到一组可核验的能力证据：能在 Windows/MSVC 上独立设计、实现、测试、调试和解释一个中等规模 inference runtime workbench；能复现和局部改造 ONNX Runtime/llama.cpp，处理张量与内存、并发调度、性能、ABI、错误和可观测性；最后用一个本地 Agent 展示层证明 runtime 的可用性。
 
 每天最低 1 小时，按 24 周滚动推进。没有学习的日子只记录缺席，不追赶；有空时再补最小未完成单元。
 
@@ -14,27 +14,27 @@
 
 | 周次 | 阶段 | 必须产出 | 进入下一阶段门禁 |
 |---|---|---|---|
-| 1–4 | C++11 基础重建与对象模型 | RAII、拷贝/移动、STL、算法实验集；Factory/Builder/RAII 资源封装 | 10 个最小测试通过；能解释生命周期、复杂度和所有权 |
-| 5–8 | 并发、可靠性与工程化 | 线程安全队列、线程池、取消/关闭、超时/重试/幂等、CMake、GoogleTest、Sanitizer、Benchmark | 压测无数据竞争/泄漏；任务可取消、可回收、可重放 |
-| 9–12 | C++17/20、Windows 与系统边界 | filesystem/optional/variant、structured bindings、折叠表达式、concepts/ranges、jthread/stop_token；Windows 句柄/进程/转储；DLL/API/ABI/ODR | 8 个标准特性实验；完成一次崩溃复现、修复和 ABI 边界报告 |
-| 13–16 | 主项目一期：PR Agent/本地 Agent Runtime | Tool Registry、Adapter、Strategy、Command、State、Pipeline；权限、diff 解析、任务调度、结构化输出、RAG/Workflow 接口 | 离线可运行；恶意输入、超时、取消、失败重放和审计测试通过 |
-| 17–20 | 主项目二期：协议、分布式可靠性与可观测性 | MCP 或 Protobuf/gRPC、SQLite 状态、事件/消息、限流/熔断/背压、结构化日志、指标、trace、崩溃转储 | 有架构图、ADR、接口契约、SLO/性能基线、故障注入和回滚方案 |
-| 21–24 | 副项目：mini-llama.cpp 切片与总验收 | 张量/Tokenizer/前向/KV Cache 至少两项；内存/缓存/量化或 SIMD 对照；对照 llama.cpp | 固定 commit；能构建、测试、Benchmark，并解释 C++/Python 和推理取舍 |
+| 1–4 | C++ 对象模型与可复现工程 | RAII、拷贝/移动、STL、错误模型；CMake Presets、CTest、诊断器 | 核心项达到 L2–L3；MSVC Debug/Release 构建测试可复现 |
+| 5–8 | 并发、内存与性能基础 | 队列、线程池、取消/关闭；tensor/arena、缓存与 matmul Benchmark | 无明显泄漏；线程可回收；正确性、吞吐和尾延迟有基线 |
+| 9–12 | ORT 基线与 Windows 系统边界 | C++ runner、EP/内存/线程/profiling 对照；DLL/API/ABI、转储 | 固定模型端到端运行；性能口径、坏输入和崩溃路径可诊断 |
+| 13–16 | llama.cpp 与 LLM 推理机制 | model/context、Tokenizer、attention、prefill/decode、KV Cache、量化与 `llama-bench` | 固定 commit 基线；最短调用链图；至少一个 instrumentation 或小修复 |
+| 17–20 | 主项目二期：优化、可观测与部署 | SIMD/多线程/批处理对照、日志/指标/trace、Windows 打包与兼容 | 有 flame graph 或等价 profiler 证据、SLO、回归门禁和新机复现 |
+| 21–24 | 展示层与求职总验收 | 本地 Agent 调用自研 runtime；工具权限、结构化输出、人工审批；与固定 llama.cpp/ONNX Runtime 版本对照 | 作品演示、架构图、3 份 ADR、证据账本和 20 分钟答辩通过 |
 
 ## 训练营项目对标
 
 | 训练营项目 | 对标方式 | 半年内定位 |
 |---|---|---|
 | AI 数字人 | 阅读实时音视频、音视频管线、推理和调度架构；实现一个非实时的音频/文本管线切片 | 架构参照或后续扩展，不作为主项目 |
-| 从零构建 PR Agent | 读取 diff、调用工具、结构化审查、证据引用、人工审批 | **主项目候选 A，优先落地** |
+| 从零构建 PR Agent | 读取 diff、调用工具、结构化审查、证据引用、人工审批 | **展示层，证明 runtime 可被应用调用** |
 | 视频会议 | 阅读 Qt/音视频/WebRTC/网络并发架构；完成单机媒体管线或信令模拟 | 架构参照，不在半年内做完整会议系统 |
-| mini-llama.cpp | 张量、Tokenizer、Transformer 前向、KV Cache、采样和 Benchmark | **副项目，必须完成可验证切片** |
+| mini-llama.cpp | 张量、Tokenizer、Transformer 前向、KV Cache、采样和 Benchmark | **核心源码线，为 workbench 提供 LLM 运行时证据** |
 
 ## 主项目选择
 
-默认选择“PR Agent + 本地工具运行时”作为主项目，原因是它同时覆盖 C++ 工程、并发、Windows、Agent、安全、协议、测试和架构表达，且不需要完整音视频基础设施。
+主项目固定为“Windows C++ inference runtime workbench”，使用 Adapter 统一 ONNX Runtime 和 llama.cpp，加入有界调度、取消、内存/指标和故障注入。它比从零重写完整 Transformer 更能在半年内形成可信工程证据，同时保留 toy tensor/matmul/量化组件验证底层理解。Agent 是最后 4 周的薄展示层，不独立扩展成平台。
 
-如果第 12 周后你对 diff、工具调用和本地任务调度仍没有兴趣，可切换为“视频会议单机媒体管线”主项目；切换必须记录原因，不同时铺开两个主项目。
+若第 12 周发现数学或硬件先修不足，不切换项目，而是缩小模型范围：保留 tensor、matmul、量化、Tokenizer、采样和调度证据，延后完整 Transformer 前向。
 
 ## 架构能力验收
 
@@ -48,7 +48,7 @@
 
 ## 设计模式与岗位闭环
 
-设计模式不单独背诵，必须在项目中留下“问题—约束—模式—替代方案—成本—测试”的记录。核心覆盖：Factory/Builder、Adapter/Facade、Strategy、Command、State、Observer、Chain of Responsibility、Pipeline、Thread Pool、Tool Registry、Middleware、Retry/Bulkhead/Circuit Breaker、Plugin 和 Event Bus；同时记录过度抽象、隐式线程、全局单例等反模式。
+设计模式不单独背诵，必须在项目中留下“问题—约束—模式—替代方案—成本—测试”的记录。优先覆盖与 runtime 直接相关的 RAII、Strategy、Factory、Registry、Adapter、Pipeline、Thread Pool、Arena、对象池和插件边界；Agent 层再按需使用 Command、Middleware 和 State。避免为了覆盖名词引入 Observer、Event Bus 或复杂继承。
 
 每四周完成一次近期岗位抽样复盘：标记岗位状态、活跃时间、技能关键词、对应项目证据和当前缺口。岗位调研的结果只能调整后续训练优先级，不能替代代码、测试和性能证据。
 
