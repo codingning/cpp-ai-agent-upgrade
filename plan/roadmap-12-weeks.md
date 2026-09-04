@@ -11,11 +11,11 @@
 | 5 | 线程池、取消、超时、背压 | `projects/task-runtime` | 取消/关闭幂等，线程全部回收 |
 | 6 | CMake、GoogleTest、Sanitizer、Benchmark、链接/ODR | 工程化改造 | Debug/Release、测试、基准和静态检查可复现 |
 | 7 | C++17：结构化绑定、if constexpr、折叠表达式、filesystem、string_view、optional、variant、any、并行算法 | 本地文件索引器 | 每项能力都有最小示例；API 能区分空值/错误，路径测试完整 |
-| 8 | Windows 进程、句柄、IO、崩溃转储 | Windows 任务执行器 | 句柄所有权、子进程超时和转储证据明确 |
-| 9 | 网络、HTTP、Protobuf/gRPC、SQLite | 工具服务原型 | 协议错误、超时、并发请求可测 |
+| 8 | Windows 进程、句柄、IO、崩溃转储、API/ABI/DLL 边界 | Windows 任务执行器 | 句柄所有权、子进程超时、转储和 DLL 边界证据明确 |
+| 9 | 网络、HTTP、Protobuf/gRPC、SQLite、分布式容错基础 | 工具服务原型 | 协议错误、超时、重试、幂等、背压、并发请求可测 |
 | 10 | C++20：concepts/requires、ranges、三路比较、consteval/constinit、jthread/stop_token、同步原语、协程机制；modules 只做认知和编译器支持调查 | 取消模型升级 | 至少完成 concepts/ranges/jthread 三个可运行实验；能说明协程和 modules 的支持边界，不把编译器可用性当成标准语义掌握 |
-| 11 | ggml/llama.cpp 源码阅读与 Benchmark | mini 推理组件切片 | 固定 commit，能构建、改动、对照基准 |
-| 12 | 综合验收与架构表达 | 离线 Git diff 审查 Agent | 证据引用、人工审批、失败重放和性能报告齐全 |
+| 11 | ggml/llama.cpp 源码阅读与 Benchmark、内存/缓存/性能分析 | mini 推理组件切片 | 固定 commit，能构建、改动、对照基准并解释瓶颈 |
+| 12 | 设计模式、架构表达、安全、可观测性与综合验收 | 离线 Git diff 审查 Agent | 有模式取舍、ADR、权限边界、证据引用、人工审批、失败重放和性能报告 |
 
 每周输出：代码、测试、一次故障复盘、一个 5 分钟口头解释。时间不足时保留“最小实验 + 1 个测试”；提前完成时增加故障注入或性能对照。
 

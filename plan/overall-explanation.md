@@ -56,3 +56,11 @@
 - P5：mini-llama.cpp 与 Electron + C++ 工作台，证明 AI 底层和桌面集成能力。
 
 每个项目都必须固定版本、核对许可证、保留测试和性能报告；无许可证或无法复现的仓库只作阅读参考。
+
+## 设计模式训练原则
+
+设计模式不单独作为背诵章节，而是嵌入项目：线程池使用生产者-消费者/Active Object；工具调用使用 Registry、Command、Middleware 和 State；失败恢复使用 Retry/Circuit Breaker；模块边界使用 Adapter/Facade/Type Erasure；事件通知只在明确需要时使用 Observer/Event Bus。每次必须记录不用某个模式的理由和成本。
+
+## 高级工程补充能力
+
+除语言和项目外，还要训练 API/ABI 与 DLL、内存分配和缓存、SIMD/性能分析、网络容错、安全边界、结构化日志/指标/trace、CI/发布/回滚、ADR 和跨团队技术表达。Linux/容器/云原生保留最小兼容线，是否加深由目标岗位证据决定。
