@@ -2,19 +2,19 @@
 
 本地提交：`a2411dc Add adaptive C++ AI agent upgrade plan`
 
-当前无法自动推送：GitHub CLI 已登录账号 `codingning`，但 keyring 中 token 已失效；当前仓库也尚未配置 remote。
+仓库已创建并完成首次推送：<https://github.com/codingning/cpp-ai-agent-upgrade>
 
-恢复后执行：
+如需在新环境重新绑定远端，可执行：
 
 ```powershell
-gh auth refresh -h github.com
-gh repo create cpp-ai-agent-upgrade --public --source . --remote origin --push
+gh auth login -h github.com
+git remote -v
 ```
 
-如果仓库已存在：
+如果远端尚未配置：
 
 ```powershell
-git remote add origin https://github.com/<账号>/cpp-ai-agent-upgrade.git
+git remote add origin https://github.com/codingning/cpp-ai-agent-upgrade.git
 git push -u origin master
 ```
 
