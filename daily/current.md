@@ -1,60 +1,69 @@
-# 当日任务 · 2026-09-07（周日，Week 1 启动前一天）
+# 当日任务 · 2026-09-07（W1D1，周日）
 
-## 今日定位
+方案 X 生效：**Week 01 = 09-07 周日 ~ 09-13 周六**，今天算 W1D1。
 
-今天是 Week 1 开始前的**周日准备日**。Week 1 的每日任务是从**明天（周一 2026-09-08）**开始的（见 `plan/weekly/week-01.md`）。
+## 已完成（准备阶段）
 
-今天可选做 2 小时"预热任务"，非强制。
+- ✅ Task 1 环境准备：Node v22.20 / MSVC 14.44 / VSCode 扩展齐 / `F:\code\ai-desktop-assistant` + `F:\code\cpp-practice` 双仓库 init
+- ✅ Task 2 周计划预读：无卡点
+- ✅ VSCode tasks.json 配置并自测通过（`Ctrl+Shift+B` 编译当前 .cpp）
+- ✅ 学习时段落定：10:30-11:10 + 17:00-17:50（工作日 1.5h）
 
-## 今日建议任务（2 小时，可选）
+## 今日学习任务（W1D1，1.5h）
 
-### Task 1（1 小时）：环境准备
+### ① C++ 30min · RAII 概念
 
-- [ ] 确认 Node.js LTS 已安装（`node -v` 应该是 v20 或 v22）
-- [ ] 确认 g++ 可用（`g++ --version`，用于 C++ 编译）
-- [ ] 确认 VSCode 有 C++ 扩展 + ESLint + Prettier
-- [ ] 创建工作目录：`F:\code\ai-desktop-assistant`（或你偏好的路径）
-- [ ] `git init` 初始化，`git remote` 先不加（Week 1 周三再上 GitHub）
+- 阅读 https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-resource （R.1-R.5）
+- 英语差用 Chrome 右键翻译
+- 闭卷回答三问：
+  1. 什么是 RAII？
+  2. 为什么析构在错误路径也执行？
+  3. 裸指针何时只是观察用途？
 
-### Task 2（1 小时）：预读本周任务
+### ② Electron 45min · Quick Start
 
-- [ ] 完整读一遍 `plan/weekly/week-01.md`
-- [ ] 标记你觉得会卡壳的点（写在本文件下方"预判卡壳"里）
-- [ ] 想清楚工作日 1.5 小时具体在哪个时间段（早晨 6:30-8:00？晚上 21:00-22:30？周末几点开始？）
-- [ ] 把学习时间加到日历里（哪怕手写在纸上）
+- 工作目录：`F:\code\ai-desktop-assistant`
+- 步骤：
+  1. `npm init -y`
+  2. `npm install --save-dev electron`（如卡：`npm config set registry https://registry.npmmirror.com`）
+  3. 照官方 https://www.electronjs.org/docs/latest/tutorial/quick-start 建 `main.js` / `index.html` / `preload.js`
+  4. `package.json` 里加 `"start": "electron ."`
+  5. `npm start` 能弹出窗口即成功
+- commit：`feat: Electron quick-start 骨架（W1D1）`
 
-## 预判卡壳（今日填写）
+### ③ 记录 15min
 
-（在这里写下你预判本周会卡住的点，Week 1 结束后回来对照，看预判准不准）
+- 新建 `daily/history/2026-09-07.md`，模板见下
 
-- 卡壳预判 1：
-- 卡壳预判 2：
-- 卡壳预判 3：
+## 记录模板
 
-## 明日 Day 1（周一 2026-09-08）预告
+```markdown
+# 2026-09-07（W1D1，周日）
 
-**主题**：C++ RAII 概念 + Electron 环境搭建
+## 完成
+- C++：...
+- Electron：...
 
-**任务**（引用 `plan/weekly/week-01.md` 周一部分）：
-- C++ 30 分钟：阅读 C++ Core Guidelines R.1-R.5，闭卷回答 RAII 3 个问题
-- Electron 45 分钟：Electron 官方 Quick Start，环境准备，能跑起 hello world
-- 记录 15 分钟：写 `daily/history/2026-09-08.md`
+## 掌握（能口述）
+- RAII 三问答案：
+  1. ...
+  2. ...
+  3. ...
 
-**准备**：如果今天 Task 1 已完成，明天可以直接进入学习
+## 未掌握/卡壳
+- ...
 
-## 说明
+## 证据
+- git commit：<hash> feat: Electron quick-start 骨架（W1D1）
+- 弹窗截图（可选）：docs/w1d1-electron-window.png
 
-**为什么今天先"预热"不直接学习**：
-- 今天是新战略落盘日，你还没消化完整体路线
-- 周日 2 小时准备好比周一手忙脚乱开始要好
-- 但如果你今天有精力，也可以直接开始 Week 1 Day 1 的任务
+## 明日计划
+- W1D2：FileHandle 类 + main.js 逐行读懂
+```
 
-**如果今天完全不想动**：
-- 也 OK，直接明天开始
-- 记得写今日记录：`daily/history/2026-09-07.md`，说明"今日为战略调整日，未训练"
+## 门禁提醒
 
-## 今日结束前的动作
-
-1. 写 `daily/history/2026-09-07.md`：记录今天做了什么（哪怕只是读了新计划）
-2. 更新 `daily/STATE.md` 的"累计投入"字段
-3. `git add . && git commit -m "chore(planning): 落盘 2026-09-07 版战略与 24 周路线"`（我会帮你做这一步）
+W1D1 不需要写 C++ 代码，Day 2 起才写。今天核心产出：
+- 一份 `daily/history/2026-09-07.md`
+- 一个能弹窗的 Electron 骨架 commit
+- 三个 RAII 问题的口述答案（写在记录里）
