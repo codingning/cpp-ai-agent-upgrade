@@ -24,12 +24,12 @@
 
 - **战略版本**：2026-09-07 版（Electron/Chromium + AI 集成方向，替代原 C++ AI 推理基础设施方向）
 - **当前阶段**：阶段一 · 基础重建 · Week 01
-- **Week 01 起止**：2026-09-07（周日）~ 2026-09-13（周六）
+- **Week 01 起止**：2026-09-07（周一）~ 2026-09-13（周日）
 - **本周主题**：C++ RAII 与生命周期 + Electron 环境搭建与 hello-world
-- **当前日期**：2026-09-07（周日）= **W1D1**
-- **今日状态**：Task 1 环境准备完成（Node v22.20 / MSVC 14.44 / VSCode 扩展齐 / F:\code 双仓库 init）、Task 2 周计划预读完成无卡点、VSCode tasks.json 已配并自测通过；准备开始 W1D1 学习任务
+- **当前日期**：2026-09-08（周二）= **W1D2**
+- **今日状态**：W1D1 已完成（Electron 弹窗 + RAII 三问）；W1D2 上午 C++ 部分已完成（FileHandle 类 + = delete 拷贝防御 + 眼见 double-free UB），下午待做 Electron main.js 逐行读懂 + 改窗口
 - **本周门禁**：见 `plan/weekly/week-01.md` 末尾"本周门禁"
-- **下一步**：执行 W1D1 三段学习（C++ 30min RAII 阅读 + Electron 45min quick-start + 15min 记录到 `daily/history/2026-09-07.md`）
+- **下一步**：下午 17:00 Electron 45min（main.js 逐行注释 + 改窗口大小/标题/菜单栏）+ 15min 记录追加
 - **累计投入**：0 小时（新路线起点）
 - **累计博客**：0 篇（目标 24 周 5 篇）
 - **Side project**：未启动（Week 1 周三启动）

@@ -1,69 +1,64 @@
-# 当日任务 · 2026-09-07（W1D1，周日）
+# 当日任务 · 2026-09-08（W1D2，周二）
 
-方案 X 生效：**Week 01 = 09-07 周日 ~ 09-13 周六**，今天算 W1D1。
+## 本周节奏（真实日历）
 
-## 已完成（准备阶段）
+| 日期 | 星期 | 编号 | 状态 |
+|---|---|---|---|
+| 09-07 | 周一 | W1D1 | ✅ 完成 |
+| 09-08 | 周二 | **W1D2 ← 今天** | 上午 ✅ / 下午 ⏳ |
+| 09-09 | 周三 | W1D3 | |
+| 09-10 | 周四 | W1D4 | |
+| 09-11 | 周五 | W1D5 | |
+| 09-12 | 周六 | W1D6（深度日 4h） | |
+| 09-13 | 周日 | W1D7（复盘日 2h） | |
 
-- ✅ Task 1 环境准备：Node v22.20 / MSVC 14.44 / VSCode 扩展齐 / `F:\code\ai-desktop-assistant` + `F:\code\cpp-practice` 双仓库 init
-- ✅ Task 2 周计划预读：无卡点
-- ✅ VSCode tasks.json 配置并自测通过（`Ctrl+Shift+B` 编译当前 .cpp）
-- ✅ 学习时段落定：10:30-11:10 + 17:00-17:50（工作日 1.5h）
+## 上午 C++（已完成）
 
-## 今日学习任务（W1D1，1.5h）
+- ✅ 手写 FileHandle 类（RAII 实践）
+- ✅ 边界测试三种路径都触发析构（正常/异常/提前 return）
+- ✅ 亲眼验证栈展开机制（第 2 题眼见为实）
+- ✅ 触发 double-free UB 并加 `= delete` 编译期堵漏
+- ✅ 记录扫盲概念：UB / CRT / SIGSEGV / CVE / Sandbox Escape
 
-### ① C++ 30min · RAII 概念
+## 下午 Electron（17:00-17:45，45min）
 
-- 阅读 https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#S-resource （R.1-R.5）
-- 英语差用 Chrome 右键翻译
-- 闭卷回答三问：
-  1. 什么是 RAII？
-  2. 为什么析构在错误路径也执行？
-  3. 裸指针何时只是观察用途？
+按 week-01.md 周二排期：**main.js 逐行读懂 + 改窗口**。
 
-### ② Electron 45min · Quick Start
+### ① main.js 逐行读懂（20min）
 
-- 工作目录：`F:\code\ai-desktop-assistant`
-- 步骤：
-  1. `npm init -y`
-  2. `npm install --save-dev electron`（如卡：`npm config set registry https://registry.npmmirror.com`）
-  3. 照官方 https://www.electronjs.org/docs/latest/tutorial/quick-start 建 `main.js` / `index.html` / `preload.js`
-  4. `package.json` 里加 `"start": "electron ."`
-  5. `npm start` 能弹出窗口即成功
-- commit：`feat: Electron quick-start 骨架（W1D1）`
+打开 `F:\code\ai-desktop-assistant\main.js`，每行加注释。目标能回答：
 
-### ③ 记录 15min
+1. `app.whenReady()` 是什么？为什么不能直接调 `createWindow()`？
+2. `BrowserWindow` 的 `webPreferences.preload` 指向什么？
+3. `app.on('window-all-closed')` 里为什么判断 `process.platform !== 'darwin'`？
+4. `app.on('activate')` 什么时候触发？
 
-- 新建 `daily/history/2026-09-07.md`，模板见下
+不懂的行先查 https://www.electronjs.org/zh/docs/latest/api/browser-window ，还不懂再问。
 
-## 记录模板
+### ② 改窗口（15min）
 
-```markdown
-# 2026-09-07（W1D1，周日）
+改 `BrowserWindow` 构造参数，一次改一个观察效果：
 
-## 完成
-- C++：...
-- Electron：...
+- `width: 1200`
+- `height: 800`
+- `title: 'AI 桌面助手'`
+- `autoHideMenuBar: true`
 
-## 掌握（能口述）
-- RAII 三问答案：
-  1. ...
-  2. ...
-  3. ...
+图标（`icon`）今天跳过，W2 再处理。
 
-## 未掌握/卡壳
-- ...
+### ③ 记录追加（10min）
 
-## 证据
-- git commit：<hash> feat: Electron quick-start 骨架（W1D1）
-- 弹窗截图（可选）：docs/w1d1-electron-window.png
+在 `daily/history/2026-09-08.md` 追加 Electron 部分：
+- 完成清单
+- 4 个问题的自答
+- 未掌握/卡壳
 
-## 明日计划
-- W1D2：FileHandle 类 + main.js 逐行读懂
-```
+## 收工
 
-## 门禁提醒
+- 提交：`cd C:\Users\...\cpp-ai-agent-upgrade && git add -A && git commit -m "docs(w1d2): 完成 W1D2 学习记录"`
+- side project 若有 commit：`cd F:\code\ai-desktop-assistant && git add -A && git commit -m "feat(w1d2): main.js 逐行注释 + 窗口参数调整"`
 
-W1D1 不需要写 C++ 代码，Day 2 起才写。今天核心产出：
-- 一份 `daily/history/2026-09-07.md`
-- 一个能弹窗的 Electron 骨架 commit
-- 三个 RAII 问题的口述答案（写在记录里）
+## 明日预告（W1D3，周三 09-09）
+
+- C++：手写 MyUniquePtr（30-50 行，支持 `->` `*` move reset）
+- Electron：建立 side project TypeScript 骨架
