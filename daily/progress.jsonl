@@ -1,1 +1,2 @@
 {"date":"2026-09-07","minutes":0,"completed":"未学习：无当天 C++ 训练证据","blocker":"git pull --ff-only 失败：TLS connect error: unexpected eof while reading","self_score":-1,"phase":"A","review_7d":"2026-09-14","review_21d":"2026-09-28"}
+{"date":"2026-09-08","minutes":90,"completed":"W1D2：FileHandle RAII 实践与 Electron main.js 注释、窗口参数调整","blocker":"","self_score":1,"phase":"A","review_7d":"2026-09-15","review_21d":"2026-09-29"}

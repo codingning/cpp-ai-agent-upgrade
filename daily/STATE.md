@@ -27,10 +27,10 @@
 - **Week 01 起止**：2026-09-07（周一）~ 2026-09-13（周日）
 - **本周主题**：C++ RAII 与生命周期 + Electron 环境搭建与 hello-world
 - **当前日期**：2026-09-08（周二）= **W1D2**
-- **今日状态**：W1D1 已完成（Electron 弹窗 + RAII 三问）；W1D2 上午 C++ 部分已完成（FileHandle 类 + = delete 拷贝防御 + 眼见 double-free UB），下午待做 Electron main.js 逐行读懂 + 改窗口
+- **今日状态**：W1D1 已完成；W1D2 C++ 与 Electron 两部分均有仓库提交和学习记录证据，未提升稳定能力等级，等待后续复测
 - **本周门禁**：见 `plan/weekly/week-01.md` 末尾"本周门禁"
-- **下一步**：下午 17:00 Electron 45min（main.js 逐行注释 + 改窗口大小/标题/菜单栏）+ 15min 记录追加
-- **累计投入**：0 小时（新路线起点）
+- **下一步**：W1D3 手写 MyUniquePtr（支持 `->`、`*`、move、reset）并建立 side project TypeScript 骨架
+- **累计投入**：约 2.5 小时（W1D1 + W1D2，按每日记录计）
 - **累计博客**：0 篇（目标 24 周 5 篇）
 - **Side project**：未启动（Week 1 周三启动）
 - **简历状态**：无（Week 4 完成 v0 保底版）
