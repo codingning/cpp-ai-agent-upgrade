@@ -26,13 +26,13 @@
 - **当前阶段**：阶段一 · 基础重建 · Week 01
 - **Week 01 起止**：2026-09-07（周一）~ 2026-09-13（周日）
 - **本周主题**：C++ RAII 与生命周期 + Electron 环境搭建与 hello-world
-- **当前日期**：2026-09-08（周二）= **W1D2**
-- **今日状态**：W1D1 已完成；W1D2 C++ 与 Electron 两部分均有仓库提交和学习记录证据，未提升稳定能力等级，等待后续复测
+- **当前日期**：2026-09-11（周五）= **W1D5**
+- **今日状态**：W1D1~W1D3 已完成；W1D4 上午 C++ 完成（自定义 deleter），**下午 Electron 因部门部署任务插入未执行，顺延到 W1D5 下午补做**
 - **本周门禁**：见 `plan/weekly/week-01.md` 末尾"本周门禁"
-- **下一步**：W1D3 手写 MyUniquePtr（支持 `->`、`*`、move、reset）并建立 side project TypeScript 骨架
-- **累计投入**：约 2.5 小时（W1D1 + W1D2，按每日记录计）
+- **下一步**：W1D5 C++ 拷贝/移动语义原理；Electron 补做 Chatbox 主进程源码阅读 + Chat UI v0
+- **累计投入**：约 5 小时（W1D1~W1D4，W1D4 按 0.75h 计）
 - **累计博客**：0 篇（目标 24 周 5 篇）
-- **Side project**：未启动（Week 1 周三启动）
+- **Side project**：已启动 `F:\code\ai-desktop-assistant`（GitHub: codingning/ai-desktop-assistant, private）。已完成 IPC 双向通信（openFile / getCurrentData / helloName）；TypeScript 化暂缓
 - **简历状态**：无（Week 4 完成 v0 保底版）
 
 ## 关键文件索引
