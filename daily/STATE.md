@@ -23,14 +23,15 @@
 ## 当前状态
 
 - **战略版本**：2026-09-07 版（Electron/Chromium + AI 集成方向，替代原 C++ AI 推理基础设施方向）
-- **当前阶段**：阶段一 · 基础重建 · Week 01
-- **Week 01 起止**：2026-09-07（周一）~ 2026-09-13（周日）
-- **本周主题**：C++ RAII 与生命周期 + Electron 环境搭建与 hello-world
-- **当前日期**：2026-09-11（周五）= **W1D5**
-- **今日状态**：W1D1~W1D3 已完成；W1D4 上午 C++ 完成（自定义 deleter），**下午 Electron 因部门部署任务插入未执行，顺延到 W1D5 下午补做**
-- **本周门禁**：见 `plan/weekly/week-01.md` 末尾"本周门禁"
-- **下一步**：W1D5 C++ 拷贝/移动语义原理；Electron 补做 Chatbox 主进程源码阅读 + Chat UI v0
-- **累计投入**：约 5 小时（W1D1~W1D4，W1D4 按 0.75h 计）
+- **当前阶段**：阶段一 · 基础重建 · Week 02
+- **Week 02 起止**：2026-09-14（周一）~ 2026-09-20（周日）
+- **本周主题**：C++ Rule of 3/5（String → Vector<T>）+ Chromium 多进程架构 + Electron 主进程 API
+- **当前日期**：2026-09-14（周一）= **W2D1**
+- **今日状态**：W1D1~W1D5 C++ 全部完成；**Electron 侧欠账三项**：Chatbox 主进程源码阅读（W1D4 起顺延 2 次）、Chat UI v0、W1D6/W1D7（09-12 周六深度日、09-13 周日复盘）无记录
+- **欠账重排**：Electron 源码阅读 → 09-14 下午（不再顺延）；Chat UI v0 → 本周六下午；W1 门禁验收 + W1 周复盘 → 并入 09-20 周日（与 W2 复盘合并）
+- **本周门禁**：见 `plan/weekly/week-02.md` 末尾"本周门禁"（W1 门禁未验收，一并留到 09-20）
+- **下一步**：W2D1 上午手写 String（Rule of 3，深拷贝/自赋值/赋值三验收）；下午 Chatbox 主进程源码阅读 + 启动流程图
+- **累计投入**：约 6.5 小时（W1D1~W1D5；W1D4 按 0.75h、W1D5 按 0.75h 计；09-12/09-13 无投入）
 - **累计博客**：0 篇（目标 24 周 5 篇）
 - **Side project**：已启动 `F:\code\ai-desktop-assistant`（GitHub: codingning/ai-desktop-assistant, private）。已完成 IPC 双向通信（openFile / getCurrentData / helloName）；TypeScript 化暂缓
 - **简历状态**：无（Week 4 完成 v0 保底版）
