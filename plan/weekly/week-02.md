@@ -40,27 +40,38 @@
 
 ### 周三（1.5 小时）
 
-**C++ 30 分钟**：
+**C++ 40 分钟**：
 - 学习 Rule of Zero：什么时候不需要写任何特殊成员函数
 - 举 3 个例子：只用 STL 容器就 OK 的类
+- 🔴 **补 A3**：move-from 对象的状态（W1 周五计划项，未做）
+  - 在 Rule of Zero 的例子上顺带验：`std::move` 之后，源对象还能不能用？值是什么？
+  - 关键词「有效但未指定」，要用实跑输出证明，不许只写结论
 
-**Electron 45 分钟**：
-- 深入 [BrowserWindow API](https://www.electronjs.org/docs/latest/api/browser-window)
-- 修改 side project：让主进程能同时打开多个窗口，窗口间通过菜单切换
+**Electron 50 分钟**：
+- 🔴 **补 A4 优先**：为什么删掉 `preload.js` 后网页里访问 `process` 会失败？（W1D2 计划项，未做）
+  - 动手：真的删掉 preload，跑一次，把报错原文抄下来
+  - 再答：`contextIsolation` 是什么？它和 09-15 读的 Chromium 渲染进程沙箱是什么关系？
+  - 这题和周二下午那篇是同一块知识的两面，连着做
+- 原计划 [BrowserWindow API](https://www.electronjs.org/docs/latest/api/browser-window) 多窗口 → **降级为只读文档**，改代码顺延到周六
 
 **记录 15 分钟**
 
 ### 周四（1.5 小时）
 
-**C++ 30 分钟**：
-- 学习 `= default` 和 `= delete`
-- 什么时候用 `= default`？什么时候用 `= delete`？
+**C++ 40 分钟**：
+- 学习 `= default` 和 `= delete`（09-15 已实测过一部分，本日补齐规则）
 - 写一个 `NonCopyable` mixin 类
+- 🔴 **补 A1 + B1（本周最重要的补课）**：异常路径下的 RAII + 单元测试
+  - W1 周一计划项「为什么析构在错误路径也执行」、周二「边界测试：抛异常」，均未做
+  - W1 门禁第 1 条原文要求「MyUniquePtr 含 move 语义**和单元测试**」，测试未做
+  - 三条路径各写一个用例：正常返回 / 提前 return / **抛异常**，证明资源都被释放
+  - 用 `assert` 断言，不许只用 `cout` 肉眼看（这是把「观察」升级成「测试」）
+  - 关键词：栈展开（stack unwinding）
 
-**Electron 45 分钟**：
-- 学习 Electron [Menu API](https://www.electronjs.org/docs/latest/api/menu)
-- 在 side project 里加入应用菜单：File / Edit / View / Help
-- File 菜单加入"新建对话"、"退出"选项（先只有 UI，无功能）
+**Electron 50 分钟**：
+- 学习 [Menu API](https://www.electronjs.org/docs/latest/api/menu)
+- 在 side project 里加应用菜单：File / Edit / View / Help（先只有 UI）
+- 🔴 **顺手清 TODO**：`main.js` 里 `win.on('closed')` 中的 `app.quit()` 删掉（多窗口场景会炸）
 
 **记录 15 分钟**
 

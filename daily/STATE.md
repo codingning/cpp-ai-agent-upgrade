@@ -27,11 +27,14 @@
 - **Week 02 起止**：2026-09-14（周一）~ 2026-09-20（周日）
 - **本周主题**：C++ Rule of 3/5（String → Vector<T>）+ Chromium 多进程架构 + Electron 主进程 API
 - **当前日期**：2026-09-15（周二）= **W2D2**
-- **今日状态**：W2D1（09-14）**完整完成**，1.75h。C++ 手写 MyString 做到 Rule of Five，三个验收点全部有实测输出佐证（验收点 1 当日补了 `reset()` 接口才真正验证出深拷贝）；Electron 欠了两次的 Chatbox `src/main/main.ts` 源码阅读当天清掉，产出启动流程图 + 三处差异。**唯一未完成**：周末（09-12/09-13）断档原因三行没写，顺延到 09-15 记录
-- **欠账重排**：Chatbox 源码阅读 ✅ 已清（09-14）；Chat UI v0 → 本周六下午；W1 门禁验收 + W1 周复盘 → 并入 09-20 周日（与 W2 复盘合并）；周末断档原因 → 09-15 记录补三行
-- **本周门禁**：见 `plan/weekly/week-02.md` 末尾"本周门禁"（W1 门禁未验收，一并留到 09-20）
-- **下一步**：W2D2 上午 C++ 验证「写了拷贝构造后编译器还生不生成移动构造」（写代码验，不靠猜）；下午把 Chatbox 的窗口大小/位置持久化抄进 `ai-desktop-assistant/main.js`
-- **累计投入**：约 8.25 小时（W1D1~W1D5 计 6.5h；09-12/09-13 无投入；W2D1 按 1.75h 计）
+- **今日状态**：W2D2（09-15）**完整完成 + 超额**，约 3h。上午 C++ 特殊成员函数生成规则，自建 10 用例实验矩阵（commit `41c1147`），闭卷四问错 1、实验中自行修正三处代码缺陷；下午 Chromium 多进程架构，Browser/Renderer 职责 + 三追问全过，`RenderProcessHost`/`RenderProcess` 初次记反后自查代码修正；额外完成 **W1 周复盘补写**（延迟 2 天）、09-12/09-13 未学习记录补建、progress.jsonl 09-09~09-15 全量补记。**本日最大产出**：用户自行对照 `plan/weekly/week-01.md` 逐条核查，查出 9 条 W1 欠账（教练初查只发现 6 条）
+- **能力等级**：C++ **L1 → L2-**（能设计对照实验、能用实跑数据推翻自己和教练的判断；但闭卷复述仍不稳定）；Chromium/Electron **L1 → L1+**。7 天复测日 **2026-09-22**：闭卷说清 5 个特殊成员函数 + 生成规则方向性，过则提 L2
+- **W1 欠账（9 条，已重排进 W2）**：A 概念 4 条（异常路径 RAII / 裸指针观察语义 / move-from 状态 / preload+contextIsolation）→ 周三、周四；B 产出 4 条（MyUniquePtr 单元测试 / Chat UI v0 / 进程模型手绘图+`docs/` / 博客大纲+`blog-drafts/`）→ 周四、周六；C 索引缺失 1 条（Rule of 3/5 数不出来）→ 周五收束日
+- **本周门禁**：见 `plan/weekly/week-02.md` 末尾"本周门禁"
+- **W1 门禁验收结果（09-15 补做）**：1 MyUniquePtr ✅；2 GitHub ≥2 commit ✅；3 Electron 主/渲染口述 ✅（下午读完 Chromium 后重答通过）；4 记录齐全 ✅（09-12/09-13 已补建，周复盘已补写）
+- **下一步**：W2D3（09-16 周三）上午 Rule of Zero + 补 A3（move-from 对象状态）；下午补 A4（实删 preload 看报错 + contextIsolation + Chromium sandbox 两篇）
+- **累计投入**：约 13.5 小时（W1 实际：09-08 90min + 09-09 90min + 09-10 45min + 09-11 105min = 5.5h，09-07/09-12/09-13 为 0；W2：09-14 105min + 09-15 180min = 4.75h。注：09-09~09-11 时长为 09-15 补记时估算）
+- **周末方案变更**：09-12/09-13 断档根因为公司代理更新后家庭电脑无法直连办公机。**改用 ToDesk 远程**，09-19（周五）前确认可用性；周六时长先按 90min 保守排，拿到真实数据后再定，不按原计划 4h 排
 - **累计博客**：0 篇（目标 24 周 5 篇）
 - **Side project**：已启动 `F:\code\ai-desktop-assistant`（GitHub: codingning/ai-desktop-assistant, private）。已完成 IPC 双向通信（openFile / getCurrentData / helloName）；TypeScript 化暂缓
 - **简历状态**：无（Week 4 完成 v0 保底版）
