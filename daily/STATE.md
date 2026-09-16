@@ -26,14 +26,14 @@
 - **当前阶段**：阶段一 · 基础重建 · Week 02
 - **Week 02 起止**：2026-09-14（周一）~ 2026-09-20（周日）
 - **本周主题**：C++ Rule of 3/5（String → Vector<T>）+ Chromium 多进程架构 + Electron 主进程 API
-- **当前日期**：2026-09-15（周二）= **W2D2**
-- **今日状态**：W2D2（09-15）**完整完成 + 超额**，约 3h。上午 C++ 特殊成员函数生成规则，自建 10 用例实验矩阵（commit `41c1147`），闭卷四问错 1、实验中自行修正三处代码缺陷；下午 Chromium 多进程架构，Browser/Renderer 职责 + 三追问全过，`RenderProcessHost`/`RenderProcess` 初次记反后自查代码修正；额外完成 **W1 周复盘补写**（延迟 2 天）、09-12/09-13 未学习记录补建、progress.jsonl 09-09~09-15 全量补记。**本日最大产出**：用户自行对照 `plan/weekly/week-01.md` 逐条核查，查出 9 条 W1 欠账（教练初查只发现 6 条）
+- **当前日期**：2026-09-16（周三）= **W2D3**
+- **今日状态**：W2D3（09-16）**部分完成**，约 110min（上午约 10:15-11:25、下午约 13:50-14:30，按文件 mtime 与对话打卡推算）。上午 ✅ Rule of Zero 实验文件 `week-02/day3_rule_of_zero.cpp`（150 行，Trace 类 + rule1/rule2/rule3 + Test1~Test4），教练实跑验证：0 error、4 条 C4996、退出码 0；**Test1 vs Test2 对照成立**——只多写一行 `~rule2() = default`，`std::move` 即静默退化为拷贝。闭卷三问只答出第 1 问（措辞不准），第 2、3 问因 Rule of 0/3/5 无索引答不出；C++98/C++11 分组答错（把拷贝赋值与移动构造对调）。下午 ⚠️ A4 只完成第一步（实删 preload + DevTools Console 抄回六行真实报错 + 两轮对照，数据质量高），**sandbox.md 未读、三问未答**；`main.js`/`preload.js` 实验后已还原（`git diff HEAD` 为空），Electron 侧无代码产出。**收尾环节当日全部缺失**：三仓零 commit、记录文件未建、STATE/current 未更新，由教练 23:00 依实跑证据补写（闭卷自答空缺处未代写）。**同一方法论毛病第三次出现**：「我看的指标真能反映我想测的东西吗」没问——09-15 traits 输出、09-15 typeid、09-16 `npm start` 终端无报错，已跨语言（C++→JS），属方法问题非知识问题
 - **能力等级**：C++ **L1 → L2-**（能设计对照实验、能用实跑数据推翻自己和教练的判断；但闭卷复述仍不稳定）；Chromium/Electron **L1 → L1+**。7 天复测日 **2026-09-22**：闭卷说清 5 个特殊成员函数 + 生成规则方向性，过则提 L2
 - **W1 欠账（9 条，已重排进 W2）**：A 概念 4 条（异常路径 RAII / 裸指针观察语义 / move-from 状态 / preload+contextIsolation）→ 周三、周四；B 产出 4 条（MyUniquePtr 单元测试 / Chat UI v0 / 进程模型手绘图+`docs/` / 博客大纲+`blog-drafts/`）→ 周四、周六；C 索引缺失 1 条（Rule of 3/5 数不出来）→ 周五收束日
 - **本周门禁**：见 `plan/weekly/week-02.md` 末尾"本周门禁"
 - **W1 门禁验收结果（09-15 补做）**：1 MyUniquePtr ✅；2 GitHub ≥2 commit ✅；3 Electron 主/渲染口述 ✅（下午读完 Chromium 后重答通过）；4 记录齐全 ✅（09-12/09-13 已补建，周复盘已补写）
-- **下一步**：W2D3（09-16 周三）上午 Rule of Zero + 补 A3（move-from 对象状态）；下午补 A4（实删 preload 看报错 + contextIsolation + Chromium sandbox 两篇）
-- **累计投入**：约 13.5 小时（W1 实际：09-08 90min + 09-09 90min + 09-10 45min + 09-11 105min = 5.5h，09-07/09-12/09-13 为 0；W2：09-14 105min + 09-15 180min = 4.75h。注：09-09~09-11 时长为 09-15 补记时估算）
+- **下一步**：W2D4（09-17 周四）上午开场 15min 清今天的尾（Rule of 0/3/5 用自己的话重答 + C++98/C++11 分组纠错 + A3 两条结论 + Test3「哪个成员删掉了拷贝构造」），剩余时间做 A1 异常路径 RAII + B1 MyUniquePtr `assert` 单元测试（门禁项）；下午优先补 A4 第二、三步（读 `sandbox.md` + 三问），Menu API 顺延周六
+- **累计投入**：约 15.3 小时（W1 实际：09-08 90min + 09-09 90min + 09-10 45min + 09-11 105min = 5.5h，09-07/09-12/09-13 为 0；W2：09-14 105min + 09-15 180min + 09-16 110min = 6.6h。注：09-09~09-11 时长为 09-15 补记时估算，09-16 为按 mtime 推算）
 - **周末方案变更**：09-12/09-13 断档根因为公司代理更新后家庭电脑无法直连办公机。**改用 ToDesk 远程**，09-19（周五）前确认可用性；周六时长先按 90min 保守排，拿到真实数据后再定，不按原计划 4h 排
 - **累计博客**：0 篇（目标 24 周 5 篇）
 - **Side project**：已启动 `F:\code\ai-desktop-assistant`（GitHub: codingning/ai-desktop-assistant, private）。已完成 IPC 双向通信（openFile / getCurrentData / helloName）；TypeScript 化暂缓
