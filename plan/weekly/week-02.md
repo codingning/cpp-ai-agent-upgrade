@@ -71,7 +71,12 @@
 **Electron 50 分钟**：
 - 学习 [Menu API](https://www.electronjs.org/docs/latest/api/menu)
 - 在 side project 里加应用菜单：File / Edit / View / Help（先只有 UI）
-- 🔴 **顺手清 TODO**：`main.js` 里 `win.on('closed')` 中的 `app.quit()` 删掉（多窗口场景会炸）
+- 🔴 ~~**顺手清 TODO**：`main.js` 里 `win.on('closed')` 中的 `app.quit()` 删掉（多窗口场景会炸）~~
+  **⚠️ 本条作废（教练 09-17 核对代码后标注）**：`F:\code\ai-desktop-assistant\main.js` 中
+  **不存在** `win.on('closed')` 监听。实际存在的是第 38-40 行的
+  `app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit() })`，
+  这是 Electron 官方推荐写法，**不能删**（删后窗口全关进程不退出）。
+  原条目描述的是另一种写法的坑，与本项目代码不符。不要执行。
 
 **记录 15 分钟**
 
