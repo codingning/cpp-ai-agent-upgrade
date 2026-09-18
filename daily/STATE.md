@@ -34,7 +34,7 @@
 - **W1 欠账（9 条）→ 已清 7 条**：A 概念 4 条全清（异常路径 RAII ✅09-17 / 裸指针观察语义 ✅09-15 / move-from 状态 ✅09-17 / preload+contextIsolation ✅09-17）；B 产出 4 条清 1（MyUniquePtr 单元测试 ✅09-17；Chat UI v0、进程模型图+`docs/`、博客大纲+`blog-drafts/` → 周六）；C 索引缺失 1 条 ✅09-17 闭卷重答通过
 - **本周门禁**：见 `plan/weekly/week-02.md` 末尾"本周门禁"。已达成：A1 异常路径 RAII ✅、B1 MyUniquePtr 单元测试 ✅
 - **W1 门禁验收结果（09-15 补做）**：1 MyUniquePtr ✅；2 GitHub ≥2 commit ✅；3 Electron 主/渲染口述 ✅（下午读完 Chromium 后重答通过）；4 记录齐全 ✅（09-12/09-13 已补建，周复盘已补写）
-- **下一步**：**09-19（周六）ToDesk 远程日，90min 保守排**，见 `daily/current.md`。主任务=补 **Chromium 进程模型手绘图**（W1 欠到现在，阶段一门禁项，用 draw.io 存 `docs/`）；补课二选一（`= default` vs 什么都不写 / 自写 noexcept-vector 对照实验）。**09-20（周日）必须写 W2 周复盘** `daily/history/2026-09-20-weekly.md`——连续第二周欠着，本人自述的「不成体系」感主要来源于此
+- **下一步**：**09-19（周六）ToDesk 远程日，90min 保守排**，见 `daily/current.md`。主任务=Chromium 进程模型：**先读 `docs/mojo_and_services.md` 末节「The Content Layer's Services」补 GPU/Utility（25min，这是 09-15 记录里说好「周六配专门资料」的那份）**，再用 draw.io 画四进程图存 `docs/chromium-process-model.drawio`（45min）。⚠️ 教练 09-18 曾错排为「直接画四进程」——但 09-15 那篇文档只详讲了 Browser/Renderer，已更正为先给资料。**09-20（周日）W2 周复盘，量已调小至约 1h**：概念梳理与欠账盘点 09-18 已由 `docs/cpp-concept-map.md` + `docs/debt-map.md` 覆盖，只需补四块——投入统计、**口头复述自评（标「自己想的/抄的」，09-18 完全没做，这是最防自欺的一栏）**、W2 门禁逐条验收、下周调整；另补 W1 周复盘空着的达成率/缺口原因/下周调整三处
 - **周末环境**：**ToDesk 已于 09-18 本人实测确认可用**，周末训练不废。周六按 90min 保守排，拿到真实数据后下周再调
 - **欠账总表**：`docs/debt-map.md`（13 条，四分类：方法论 2 / C++ 6 / Electron 2 / 产出 3）。方法论两条排最前——「运行前先写预测」已 5 次未执行、「实验要有分辨力」09-18 连犯两次
 - **累计投入**：约 18.6 小时（W1 实际：09-08 90min + 09-09 90min + 09-10 45min + 09-11 105min = 5.5h，09-07/09-12/09-13 为 0；W2：09-14 105min + 09-15 180min + 09-16 110min + 09-17 200min = 9.9h。注：09-09~09-11 时长为 09-15 补记时估算，09-16/09-17 为按 mtime 推算）
