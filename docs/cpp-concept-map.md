@@ -9,7 +9,13 @@
   - day1_string.cpp
 - 左值
   - 左值全部可以取地址
-    - ❓仍待补实验（day7_value_category.cpp 只测了值类别，没测 &a，别当已验证）
+    - 正面：std::cout << &a 打出 000000E217CFFB50
+    - 反面（#ifdef 编译期对照，一次只放一行）：
+      - &10 → C2101「常量上的"&"」（字面量是纯右值，没有对象也没有存储位置）
+      - &(a+1) → C2102「"&"要求左值」
+      - &std::move(a) → C2102（注意：a 本身有地址，但 std::move(a) 这个**表达式**的结果是右值）
+    - 字面量报 C2101、表达式报 C2102 —— 编译器本身也把这两者当不同原因
+      - day7_value_category.cpp test3
   - 有名字的右值是左值
     - probe(int&)/probe(int&&) 重载探针实测：test2(int&& x) 里 probe(x) 打印「左值」
       - day7_value_category.cpp

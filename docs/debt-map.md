@@ -18,18 +18,21 @@
 - 教练对一个 3 分钟的实验说「挂到 W3」，与 Vector<T> 拖两周同一个动作
 - 规矩：能当场做完的不许排进下周
 ## C++ 概念欠账
-### 🎉 C++ 侧已全部清空（2026-09-20）
-- 左值「可取地址」那半条例外：day7_value_category.cpp 只测了值类别，没测 `&a`
-- 不单列为欠账，随手在下次实验里补一行即可
+### 🎉 C++ 侧已全部清空（2026-09-20，零 ❓）
+- 知识图 `cpp-concept-map.md` 上 5 个 ❓ 全部拿到自有实验证据，无待补项
 ## Electron / Chromium 欠账
-### A4 sandbox → contextIsolation → preload 三层链
-- Q11 说「各管各的」，Q12 说「nodeIntegration:true 会关掉沙箱」，自相矛盾
-- 09-20 周复盘本人判「已掌握」，**教练驳回**：条件是自己核官方文档，不是听教练结论
-- 教练已实抓官方 tutorial/sandbox 两句原文（见 2026-09-20-weekly.md）：
-  三者是递进三层，不是并列；nodeIntegration:true 直接掀掉第一层
-- 要求：读 tutorial/sandbox + tutorial/context-isolation，每层写清
-  「不开这层，攻击者能多拿到什么」
-- 状态：⚠️ 进行中（09-20 下午）
+### ~~A4 sandbox → contextIsolation → preload 三层链~~ ✅ 09-20 结账
+- 本人自核 Electron 官方 `tutorial/sandbox` + `tutorial/context-isolation` + `tutorial/security` 后重答通过
+- 三层递进（不开这层攻击者能多拿到什么）：
+  1. 沙箱掉 → 拿到渲染进程那个 OS 进程的全部权限（沙箱内只能自由用 CPU 和内存，其余靠 IPC 委托）
+  2. 沙箱在、contextIsolation 掉 → 拿不到 OS，但拿到 **preload 那一层的权限**；
+     且两者共享同一个 window，攻击者可改 `Array.prototype.push` 等内置方法，**等高权限代码来调用他**
+  3. 两层都在、contextBridge 写错 → 仍漏。官方反例 `exposeInMainWorld('myAPI',{send: ipcRenderer.send})`
+     等于让任意网站发任意 IPC；正确做法是一个 IPC 消息包一个方法
+- **Q11/Q12 矛盾解法**：两句都对，不矛盾。开关是独立的（nodeIntegration 不影响 contextIsolation），
+  但防护是**串联**的——第一层塌了后两层拦不住从第一层进来的人。
+  官方原话：关 Node 集成可防止 XSS 升级成 RCE；开着时页面脚本直接有 `require('child_process')`，
+  攻击者根本不需要偷 preload 的 API
 ### Utility 和 Renderer 的区别
 - 09-19 记录里空缺，09-20 块 2 题 7 仍空——连续两次落地
 - ⚠️ 教练 09-19 曾在此翻车（给了一篇不含答案的 mojo_and_services.md）
