@@ -18,6 +18,12 @@
 - `std::vector`：动态数组，push_back 的均摊 O(1) 是怎么回事
 - 迭代器失效场景：push_back 后原迭代器可能失效，为什么
 
+**🟣 追加档 · Vector<T> 第 1 刀（25 分钟，不替代上面任何一条）**：
+- `F:\code\cpp-practice\week-03\my_vector.h`
+- 只写：`template<class T> class MyVector`，成员 `T* data_ / size_t size_ / size_t cap_`，
+  加一个构造 + 一个析构 + `push_back`（先不管扩容，cap_ 固定 4，满了直接 assert）
+- 目标不是写完，是让这个文件今天存在并能编译
+
 **Electron 45 分钟**：
 - side project 引入 React（如果还没有）
 - 用 create-electron-app 或手动集成 React + TypeScript
@@ -31,6 +37,11 @@
 - `std::map`（红黑树）vs `std::unordered_map`（哈希表）
 - 查询复杂度：O(log n) vs O(1) 平均
 - 什么场景用 map，什么场景用 unordered_map
+
+**🟣 追加档 · Vector<T> 第 2 刀（25 分钟）**：
+- 把固定 cap_ 改成真扩容：满了申请 2 倍新空间、搬数据、释放旧的
+- 自己跑一次：push_back 10 个元素，每次打印 cap_，看是不是 4→8→16
+- **跑之前先在注释里写死你猜的序列**（元规则，这是第 7 次要求了）
 
 **Electron 45 分钟**：
 - Chat UI 组件拆分：ChatWindow / MessageList / MessageItem / InputBox
@@ -59,6 +70,10 @@
 - `std::list` 什么时候用（很少用，但要知道特性）
 - `std::deque` 与 vector 的区别
 - 一道题：反转链表（用 STL list 或手写单链表）
+
+**🟣 追加档 · Vector<T> 第 3 刀（25 分钟）**：
+- 给 MyVector 补 Rule of 5：拷贝构造 / 拷贝赋值 / 移动构造 / 移动赋值 / 析构
+- 这是 W2 学的整张表第一次落到自己的容器上，不是新知识，是索引挂钩
 
 **Electron 45 分钟**：
 - 消息 UI 优化：区分用户消息和 AI 消息（左右对齐、颜色）
@@ -109,6 +124,18 @@
 - [ ] 迭代器失效 5 个场景闭卷讲清楚
 - [ ] Chat UI 用 React 实现，能收发本地消息，UI 看起来像产品
 - [ ] 5 天日记 + 1 份周日复盘 + 博客草稿 500 字
+- [ ] 🟣 **`MyVector<T>` 可编译可运行，含 Rule of 5 + 扩容 + assert 测试**
+      （拖了两周，本周升为门禁项，不再放「有余力」。周一/二/四各切 25 分钟追加档，
+      三刀切完就是成品。**这三刀不占用当天原有 C++ 30min 与 Electron 45min 的任何时间**）
+
+## W2 遗留欠账（W3 内必须清，不占门禁但要销账）
+
+- [ ] 进程模型图 cell 48/49 重填（09-20 已重答，落图待办）
+- [ ] 博客大纲四处修改 → 09-20 已改
+- [ ] `= default` vs 什么都不写：区别点在「用户是否声明」，概念图上仍是错的
+- [ ] 析构函数 `protected` 的「为什么」
+- [ ] Q11/Q12 沙箱矛盾：自己读 Electron 官方 webPreferences 文档核实
+- [ ] noexcept → vector 扩容退化，本人写一次实验（**并入本周 MyVector，天然合流**）
 
 ## 卡壳降级
 
