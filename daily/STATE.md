@@ -45,14 +45,26 @@
   Ⓒ 本人当面指出教练「3 分钟的实验说挂到 W3」＝ Vector 拖两周的同一个动作，已立规矩：能当场做完的不许排下周。
   **教练当日自身出错 2 次**：出题诱导（「BrowserWindow 对应谁」诱向进程对象）、
   把析构 protected 误标为未补（09-17 history 第 55-57 行本人早已答对，**第 4 次「不核来源照记忆排」**）。
+  ⑥**【23:00 补记 · 17:16】**`day7_value_category.cpp` test3 补测「左值可取地址」（commit `bf9f125`）：
+  正面 `&a` = `000000E217CFFB50`；反面 `#ifdef` 三条一次放一行——`&10` → **C2101**（字面量是纯右值，
+  没有对象也没有存储位置）、`&(a+1)` → **C2102**、`&std::move(a)` → **C2102**。
+  字面量与表达式报的是**不同错误码**。→ `docs/cpp-concept-map.md` **零 ❓**。
+  ⑦**【23:00 补记 · 17:28】A4 三层链结账**（commit `45ff2f4`）：本人自核官方 `tutorial/sandbox` +
+  `tutorial/context-isolation` + `tutorial/security` 三篇后重答通过，已写入 `docs/debt-map.md`——
+  沙箱掉 → 拿整个渲染进程的 OS 权限；contextIsolation 掉 → 拿 preload 层权限且共享同一 `window`，
+  可改 `Array.prototype.push` 等**高权限代码来调用他**；contextBridge 写错（整个暴露 `ipcRenderer.send`）仍漏。
+  **Q11/Q12 矛盾解法：开关独立、防护串联，两句都对。**
+  ⑧日流水记录 `daily/history/2026-09-20.md` 由教练 23:00 补建（周复盘正文仍在 `-weekly.md`）。
 - **能力等级**：C++ **L2-** → **L2 候选**（7 天复测 09-22 定）——今天五条欠账全部拿到**自有实验证据**，
-  知识图上 ❓ 从 5 个降到 1 个；且首次出现「自己发现实验无分辨力并改进设计」。
-  Chromium/Electron **L1+**（不变）——A4 仍未自核，Utility vs Renderer 仍空。
-- **C++ 侧欠账：✅ 全清**（仅剩「左值可取地址」半条，day7_value_category.cpp 只测了值类别没测 `&a`，
-  不单列，下次实验随手补一行）
-- **Chromium/Electron 侧欠账（2 条，W3 清）**：
-  ①**A4 三层链**——读 `tutorial/sandbox` + `tutorial/context-isolation`，每层写清「不开这层攻击者能多拿到什么」（09-20 下午进行中）
-  ②**Utility vs Renderer 区别**——09-19 空、09-20 块 2 题 7 仍空，连续两次落地。
+  知识图上 ❓ 从 5 个**降到 0 个**（17:16 test3 清掉最后一个）；且首次出现「自己发现实验无分辨力并改进设计」。
+  Chromium/Electron **L1+ → L2 候选**（7 天复测 09-22 定）——A4 三层链 17:28 已自核官方文档结账，
+  仅 Utility vs Renderer 仍空。
+- **C++ 侧欠账：✅ 全清**（「左值可取地址」半条已于 17:16 `day7_value_category.cpp` test3 补测完，
+  正反两面证据齐全，**知识图零 ❓**）
+- **Chromium/Electron 侧欠账（1 条，W3 清）**：
+  ~~①**A4 三层链**~~ **✅ 09-20 17:28 结账**（本人自核官方 sandbox / context-isolation / security 三篇，
+  commit `45ff2f4`，答案写在 `docs/debt-map.md`）
+  ①**Utility vs Renderer 区别**——09-19 空、09-20 块 2 题 7 仍空，连续两次落地。
   ⚠️ 教练 09-19 曾在此翻车（给了不含答案的 `mojo_and_services.md`），**出处待教练实读
   `process_model_and_site_isolation.md` / `sandbox.md` 确认后再布置**
 - **下一步**：**09-21（周一）W3D1 启动**，见 `plan/weekly/week-03.md`。
