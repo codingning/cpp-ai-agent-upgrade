@@ -23,11 +23,45 @@
 ## 当前状态
 
 - **战略版本**：2026-09-07 版（Electron/Chromium + AI 集成方向，替代原 C++ AI 推理基础设施方向）
-- **当前阶段**：阶段一 · 基础重建 · Week 02
+- **当前阶段**：阶段一 · 基础重建 · Week 02 收官 → Week 03 待启
 - **Week 02 起止**：2026-09-14（周一）~ 2026-09-20（周日）
 - **本周主题**：C++ Rule of 3/5（String → Vector<T>）+ Chromium 多进程架构 + Electron 主进程 API
-- **当前日期**：2026-09-19（周六）= **W2D6 · ToDesk 远程日**
-- **今日状态**：W2D6（09-19）**约 140min（13:50–16:09，按 mtime+commit 推算）**，**本周三个 🔴 门禁补课项全部落地**：①主任务 Chromium 四进程模型图 `docs/chromium-process-model.drawio`（四框 + 职责 + 沙箱标注 + MOJO 边，四句职责经教练读 XML 核对与官方资料一致，Utility「网络服务默认在这儿」出自 `services/network/README.md`）；②补 B2 Chat UI v0（`index.html` 三段式 flex + `overflow-y` 消息区 + 左右气泡，纯 HTML/CSS，commit `3ec8791`）；③补 B4 建 `blog-drafts/` + 第 1 篇三节标题（commit `bf8ab4e`）。**最大亮点**：13:50 本人自查发现教练漏排 week-02.md 周六的 B2/B4 两个门禁项并要求补回——自查质量高于教练初排（此为教练第二次犯「新排替代原计划」的错）。**遗留**：图上 cell48 填「RenderProcessHost 对应 ipcMain」是**错答且与同图黄框注释自相矛盾**（该对应关系第三次出错）、cell49 仍空；博客大纲四处未改；**元规则「运行前先写预测」第六次未见书面执行**（current.md 明确要求写两条猜测，仓库内找不到）；当日未自建记录文件（教练 23:00 补写，09-16 后第二次）；本日 **C++ 侧零产出**，`Vector<T>` 连续两周未动。**教练当日自身出错 4 次**（资料失效 2 次、Renderer↔GPU 断言错 1 次、要求做未训练过的 CSS 对照实验 1 次），已记入 history 供周复盘核对计划可靠性
+- **当前日期**：2026-09-20（周日）= **W2D7 · W2 周复盘 + 欠账清算日**
+- **今日状态**：W2D7（09-20）**W2 周复盘完成 + C++ 侧欠账全清**。
+  ①周复盘 `daily/history/2026-09-20-weekly.md` 四块全填：投入统计（本人复核 735min=12.25h，累计 17.75h，
+  `STATE.md` 原「18.6h」作废）、口头复述自评九题闭卷自答（5 对 / 3 错已纠 / 1 空）、门禁逐条验收、下周调整。
+  ②教练驳回本人对 **A4 的「已掌握」自判**——条件是自核官方文档而非听教练结论，已实抓 Electron
+  `tutorial/sandbox` 原文证明三者是**递进三层**非并列（`nodeIntegration:true` 直接掀掉第一层）。
+  ③`day7_debt_clear.cpp` 一个文件清四条 C++ 欠账 + 额外清一条（commit `89a15e9` / `1d579e0`）：
+  `=default` 算用户声明（D1 走拷贝 / D2 走移动）、拷贝构造 delete 不连坐拷贝赋值（D10 成员逼出调用链）、
+  move 退化两缺例（D5 const / D6 无移动构造）、noexcept→vector 扩容（D7 拷贝 / D8 移动）、
+  移动构造反向抑制拷贝（`#ifdef` 编译期对照，关=exit 0 / 开=exit 2 两条 C2280 + 编译器 note 原话）。
+  ④`day7_value_category.cpp` 清左值/右值（commit `ccf4aac`）：五条重载探针实测，
+  **`test2(int&& x)` 里 `probe(x)` 打印「左值」，本人动手前预测命中**。
+  ⑤进程图 cell48/49 按订正口径重填、博客大纲四处改完（commit `60a50b0`）。
+  **三大方法论进步**：Ⓐ「我认为 X 由 ___ 决定」首次执行，且实验推翻预测后**回头改了结论行**；
+  Ⓑ 本人自行发现 `static_assert` 对「=default 是否抑制移动」**无分辨力**（两侧都为真），
+  改用带打印实例化才分开——这正是连犯三次的那个坑，今天自己绕过去了；
+  Ⓒ 本人当面指出教练「3 分钟的实验说挂到 W3」＝ Vector 拖两周的同一个动作，已立规矩：能当场做完的不许排下周。
+  **教练当日自身出错 2 次**：出题诱导（「BrowserWindow 对应谁」诱向进程对象）、
+  把析构 protected 误标为未补（09-17 history 第 55-57 行本人早已答对，**第 4 次「不核来源照记忆排」**）。
+- **能力等级**：C++ **L2-** → **L2 候选**（7 天复测 09-22 定）——今天五条欠账全部拿到**自有实验证据**，
+  知识图上 ❓ 从 5 个降到 1 个；且首次出现「自己发现实验无分辨力并改进设计」。
+  Chromium/Electron **L1+**（不变）——A4 仍未自核，Utility vs Renderer 仍空。
+- **C++ 侧欠账：✅ 全清**（仅剩「左值可取地址」半条，day7_value_category.cpp 只测了值类别没测 `&a`，
+  不单列，下次实验随手补一行）
+- **Chromium/Electron 侧欠账（2 条，W3 清）**：
+  ①**A4 三层链**——读 `tutorial/sandbox` + `tutorial/context-isolation`，每层写清「不开这层攻击者能多拿到什么」（09-20 下午进行中）
+  ②**Utility vs Renderer 区别**——09-19 空、09-20 块 2 题 7 仍空，连续两次落地。
+  ⚠️ 教练 09-19 曾在此翻车（给了不含答案的 `mojo_and_services.md`），**出处待教练实读
+  `process_model_and_site_isolation.md` / `sandbox.md` 确认后再布置**
+- **下一步**：**09-21（周一）W3D1 启动**，见 `plan/weekly/week-03.md`。
+  原有 C++ 30min（`std::vector` 均摊 O(1) + 迭代器失效）+ Electron 45min（React 引入）**不动**，
+  另加 🟣 **MyVector 追加档 25min**（第 1 刀：骨架 + 固定 cap push_back）。
+  **MyVector 已从「有余力」升为 W3 门禁项**，周一/二/四各 25min 三刀切完，明确不占用当天原有时段
+- **周末环境**：ToDesk 已于 09-18 本人实测确认可用，周末训练不废
+- **欠账总表**：`docs/debt-map.md`（**已更新**：C++ 6 条全清 → 仅剩 Electron 2 / 产出 2 / 方法论 3 条常驻纪律）
+- **今日状态（09-19 归档）**：W2D6（09-19）**约 140min（13:50–16:09，按 mtime+commit 推算）**，**本周三个 🔴 门禁补课项全部落地**：①主任务 Chromium 四进程模型图 `docs/chromium-process-model.drawio`（四框 + 职责 + 沙箱标注 + MOJO 边，四句职责经教练读 XML 核对与官方资料一致，Utility「网络服务默认在这儿」出自 `services/network/README.md`）；②补 B2 Chat UI v0（`index.html` 三段式 flex + `overflow-y` 消息区 + 左右气泡，纯 HTML/CSS，commit `3ec8791`）；③补 B4 建 `blog-drafts/` + 第 1 篇三节标题（commit `bf8ab4e`）。**最大亮点**：13:50 本人自查发现教练漏排 week-02.md 周六的 B2/B4 两个门禁项并要求补回——自查质量高于教练初排（此为教练第二次犯「新排替代原计划」的错）。**遗留**：图上 cell48 填「RenderProcessHost 对应 ipcMain」是**错答且与同图黄框注释自相矛盾**（该对应关系第三次出错）、cell49 仍空；博客大纲四处未改；**元规则「运行前先写预测」第六次未见书面执行**（current.md 明确要求写两条猜测，仓库内找不到）；当日未自建记录文件（教练 23:00 补写，09-16 后第二次）；本日 **C++ 侧零产出**，`Vector<T>` 连续两周未动。**教练当日自身出错 4 次**（资料失效 2 次、Renderer↔GPU 断言错 1 次、要求做未训练过的 CSS 对照实验 1 次），已记入 history 供周复盘核对计划可靠性
 - **今日状态（09-18 归档）**：W2D5（09-18）完成闭卷默写整张表（4 题，第 3/4 题经批改后重答通过）；Menu 接线 commit `240b09a` 并用「删 File 菜单项→所有窗口同时消失」验证菜单为**全局一份**（原猜每窗口一份，猜错）；概念图从 ProcessOn 迁到 **markmap** 并三轮重构定版 `docs/cpp-concept-map.md`——主干七步因果链（RAII→持有资源→拷贝要处理→6 个函数→Rule 0/3/5→抑制规则→退化陷阱）+ [C++98]/[C++11] 版本标记 + 抑制表两行 + 工具箱补入 `=delete`/`=default`，**可直接当 09-22 七天复测的复述提纲**；新增 `docs/debt-map.md`（13 条欠账四分类）与 `docs/roadmap-map.md`（24 周全景 + 里程碑时间轴）；**ToDesk 本人实测确认可用** → 周六不重排。**遗留**：实验设计缺分辨力当日连犯两次（第三次才对）；Rule of 0 定义再次答错（09-17 答对过，答表现不答条件）；`= default` vs 什么都不写仍未重答；析构 `protected` 的为什么仍未补；Q11/Q12 矛盾只听结论未自行核实官方文档；noexcept→vector 扩容退化无本人实验；**元规则「运行前先写预测」第五次未执行**；current.md 原定的 progress.jsonl 核对与本周门禁自测两项未做（下午时间全用于工具链改造）。**~~`ai-desktop-assistant` push 失败~~ → 23:00 教练实测更正：三仓远端均已同步（`git ls-remote` 实查 240b09a / 013c4c2 / e9d8ed7 全部与本地一致），当时那两次超时发生在推送生效之后，不是凭据失效。「超时=失败」是又一次缺分辨力的判断（本日第三次），分辨只需 `git ls-remote origin master` 对 hash**
 - **能力等级**：C++ **L2-**（不变）——抑制关系表与 move 退化三条经重答后全对，但 Rule of 0 定义二次答错说明索引仍不牢；7 天复测日 **2026-09-22** 照常。Chromium/Electron **L1+**（不变）——Q11/Q12 矛盾仍未自行核实
 - **今日状态（09-17 归档）**：W2D4（09-17）**基本完成，本周最扎实的一天**，约 200min（按 mtime 三段：10:30-11:03 / 14:00-14:21 / 17:35-18:12，另 21:34 重编一次）——**大幅超出 1.5h 保底**。09-16 欠账**全清**：Rule of 0/3/5 闭卷重答通过、C++98/C++11 分组纠正、Test3 传染机制说清、A3 两条结论补上。✅ A1 `week-02/day4_exception_raii.cpp` + ✅ B1 `week-02/day4_uniqueptr_test.cpp`（commit `ff3a0d1`）——**W2 门禁两项达成**。✅ 本日原定内容也动了手：`day4_noncopyable.cpp`，教练实跑 0 error / 1 条 C4189 / 退出码 0，`is_copy_constructible_v<Widget>`=0、`is_move_constructible_v<Widget>`=1 证明 mixin 生效；另自己用 `#ifdef USE_DELETE` 做出「`= delete` 禁某个重载被选中」的对照并抄回 C2280（这是 current.md 的提示项，做到了但没写进答案）。✅ A4 第二、三步（sandbox.md 两节 + 三句话 + 三问），并**自行补读** Electron 官方 sandbox / context-isolation 两篇（自己发现的缺口，值得记）。✅ 记录文件本人自写（09-16 是教练补的）。**遗留**：Menu 只写了 `menu.js` 未在 `main.js` require，菜单实际未生效；`= default` vs 什么都不写答成了生成规则、没答到「用户声明」；两处空白（move 翻车原因 / 析构 protected 的为什么）；Q11 与 Q12 自相矛盾（沙箱与 nodeIntegration 画等号）；`day4_noncopyable.cpp`、`menu.js` 未 commit；「今日一句话复述」连续第二天空缺；**元规则「运行前先写预测」第四次未执行**（代码注释只有事后抄回的报错，无事前预测——但 Menu 那题写了猜测，说明是只在被问到时才做）
