@@ -69,8 +69,13 @@
   `process_model_and_site_isolation.md` / `sandbox.md` 确认后再布置**
 - **下一步**：**09-21（周一）W3D1 启动**，见 `plan/weekly/week-03.md`。
   原有 C++ 30min（`std::vector` 均摊 O(1) + 迭代器失效）+ Electron 45min（React 引入）**不动**，
-  另加 🟣 **MyVector 追加档 25min**（第 1 刀：骨架 + 固定 cap push_back）。
-  **MyVector 已从「有余力」升为 W3 门禁项**，周一/二/四各 25min 三刀切完，明确不占用当天原有时段
+  另加 🟣 **MyVector 追加档 75min**（三刀合一：骨架+assert / 真扩容 / Rule of 5 + 五路径测试）。
+  **09-21 变更**：原排「周一/二/四各 25min 三刀」，**本人当日提出合并、教练核对 debt-map 后采纳**，
+  周二/周四追加档撤销。教练在此处出错两次：①拿 week-03.md 第 138 行过期条目当依据，
+  断言「noexcept→扩容退化实验要等 MyVector 能扩容后做」，而该实验 09-20 已由 day7 实验4 完成；
+  ②主张「Rule of 5 要隔一天写才算索引挂钩」，但 09-20 day7 已把整张表逐条实验过，
+  间隔检索价值已用掉。**根因同第 5 次老毛病：排计划前不核 debt-map/history，照记忆和过期文件说话。**
+  已连带修正：week-03.md「W2 遗留欠账」6 条中 4 条早已清却一直挂着未同步
 - **周末环境**：ToDesk 已于 09-18 本人实测确认可用，周末训练不废
 - **欠账总表**：`docs/debt-map.md`（**已更新**：C++ 6 条全清 → 仅剩 Electron 2 / 产出 2 / 方法论 3 条常驻纪律）
 - **今日状态（09-19 归档）**：W2D6（09-19）**约 140min（13:50–16:09，按 mtime+commit 推算）**，**本周三个 🔴 门禁补课项全部落地**：①主任务 Chromium 四进程模型图 `docs/chromium-process-model.drawio`（四框 + 职责 + 沙箱标注 + MOJO 边，四句职责经教练读 XML 核对与官方资料一致，Utility「网络服务默认在这儿」出自 `services/network/README.md`）；②补 B2 Chat UI v0（`index.html` 三段式 flex + `overflow-y` 消息区 + 左右气泡，纯 HTML/CSS，commit `3ec8791`）；③补 B4 建 `blog-drafts/` + 第 1 篇三节标题（commit `bf8ab4e`）。**最大亮点**：13:50 本人自查发现教练漏排 week-02.md 周六的 B2/B4 两个门禁项并要求补回——自查质量高于教练初排（此为教练第二次犯「新排替代原计划」的错）。**遗留**：图上 cell48 填「RenderProcessHost 对应 ipcMain」是**错答且与同图黄框注释自相矛盾**（该对应关系第三次出错）、cell49 仍空；博客大纲四处未改；**元规则「运行前先写预测」第六次未见书面执行**（current.md 明确要求写两条猜测，仓库内找不到）；当日未自建记录文件（教练 23:00 补写，09-16 后第二次）；本日 **C++ 侧零产出**，`Vector<T>` 连续两周未动。**教练当日自身出错 4 次**（资料失效 2 次、Renderer↔GPU 断言错 1 次、要求做未训练过的 CSS 对照实验 1 次），已记入 history 供周复盘核对计划可靠性
