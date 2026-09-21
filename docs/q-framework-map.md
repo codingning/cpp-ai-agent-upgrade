@@ -189,119 +189,173 @@ installer + service + ipc + shell_extension），不是 4000+。
 
 ---
 
-## 七、30 天吃透计划（2026-09-22 起，每天 25min）
+## 七、30 天吃透计划 · 技术深度版（2026-09-22 起，每天 25min）
 
-### 设计原则（四条，均来自本人已立的规矩）
+> **⚠️ 本节于 09-21 晚重排。** 原版按「本人提交过的模块」排课，被本人当场驳回：
+> 「不要只排我提交的部分，要排**重点技术框架和设计框架**，以及能体现**技术深度+广度**的部分」。
+> **驳回成立。** 按职责边界排课，天花板是本人当前水平；按技术难点排课，天花板才是项目水平。
+> 职责边界（第二节）只用于**简历表述**，不再用于**排课顺序**。
 
-1. **每天有可验证产出**，不许「今天读了一下」。产出=一张调用链图 / 一段能跑的实验 / 一个改动
-2. **从你独占的模块起手**，最有把握处建立读码方法，再推向陌生模块
-3. **能动手就不只读**（你可编译可改可提 CL）—— **读十遍不如改一行**
-4. **每个非当日主角的概念标一行「它是什么」**，不假设你会附带知识
+### 排课主轴：这个项目里最难的六样东西
 
-### 前置概念清单（教练欠你的，D1 前补齐）
+实查确认的技术硬货（非推测，出处见各行）：
 
-| 概念 | 它是什么 | 何时讲 |
-|---|---|---|
-| COM | Windows 的二进制组件标准，让 DLL 能被任何语言按接口调用 | D1 |
-| Shell 扩展 | 注册给资源管理器的 COM 组件，右键菜单/图标由它提供 | D1 |
-| GN / Ninja | GN 生成构建描述，Ninja 执行编译 | D3 |
-| DuiLib / DirectUI | 用 XML 描述界面、自绘控件的 UI 库，无 Windows 原生控件 | D6 |
-| Windows 服务 | 开机自启、无界面、可高权限运行的后台进程 | D11 |
-| 命名管道 | Windows 进程间通信机制，像文件一样读写 | D13 |
+| # | 技术点 | 为什么是硬货 | 出处 |
+|---|---|---|---|
+| 1 | **IOCP 异步 IPC** | Windows 最高性能 I/O 模型；带长度前缀协议、16MB 大消息分片重组、多客户端会话管理。**自带 benchmark + unittest** | `ipc/README.md`、`iocp_named_pipe_benchmark.cc` |
+| 2 | **Chromium 线程模型落地** | ThreadPool + WeakPtr + SEQUENCE_CHECKER 三件套在真实产品里的完整用法。**这是 Electron/Chromium 岗的核心考点** | `CLAUDE.md` 第 75-79 行 |
+| 3 | **Windows 安全模型 / 服务提权** | `GetActiveUserToken` + `TokenLinkedToken` + UAC 提权 + 跨会话启动进程。**与 Chromium 沙箱同类知识** | `service/session_util.h` 第 8-18 行 |
+| 4 | **WebView 双后端抽象** | 同一套接口驱动 WebView2 与 CEF 两种引擎；JS↔C++ 双向通信。**CEF 就是 Chromium 内核** | `webview/`、`CEF_JS_COMMUNICATION_GUIDE.md` |
+| 5 | **可回滚安装（WorkItem）** | Chromium installer 的经典设计，事务化操作 + 失败自动回滚 | `installer/util/`，`CLAUDE.md` 第 166 行 |
+| 6 | **门面 + 插件化引擎群** | `CompressService` 统一 6 种异构引擎（bit7z/FFmpeg/PDF/ONNX/ImageMagick/Office），含动态 DLL 加载 | `CLAUDE.md` 第 110-114 行 |
+
+**补充广度素材**：`components/` 下 12 个子模块（登录/支付/埋点/默认程序/留存/激励视频/开屏广告）
+—— 这是**商业化桌面产品的完整形态**，比纯技术更能体现工程广度。
 
 ---
 
-### 🟢 阶段一（D1-D5）· 从你 100% 独占的模块起手
+### 🔴 阶段一（D1-D6）· IOCP 异步 IPC —— 全项目技术密度最高处
 
-**目标**：建立读码方法论，先在最有把握的地方把「读懂」的标准立起来。
+**为什么从这里开始**：① 它是整个项目的通信骨架；② 自带 benchmark 和 unittest，
+**能跑能测能改数字**，符合「读十遍不如改一行」；③ 直接对标 Electron IPC，
+是你面试差异化的最强武器。规模仅 5 个文件，不会陷进去。
+
+| 日 | 任务 | 产出物（必须是图/实验，不许「我读了X」） |
+|---|---|---|
+| D1 | 前置课（教练讲）：同步 I/O / 异步 I/O / IOCP 各是什么，为什么需要 IOCP。然后读 `ipc/README.md` + `detailed.md` | 一句话答：**不用 IOCP 会死在哪**（⚠️ 你的高频坑：因果倒置，必须答「不拆开会死在哪」） |
+| D2 | **跑起来**：编译并运行 `ipc_unittests.exe` + `iocp_named_pipe_benchmark.cc` | 真实 benchmark 数字截图 |
+| D3 | 读 `iocp_named_pipe.h` 全部接口 | 类图：Server / Client / Session 三者关系 |
+| D4 | 读消息协议实现：长度前缀、16MB 大消息如何分片重组 | 数据包结构图 + 一条消息从发到收的完整路径 |
+| D5 | **动手实验**：改消息大小上限或并发数，重跑 benchmark，看数字怎么变 | 前后数字对比（⚠️ 必须有分辨力：先问「如果我的假设反了，数字会不一样吗」） |
+| D6 | **对照 Electron IPC**：`ipcMain/ipcRenderer` vs IOCP 命名管道 | 对照表第 1 行：传输层 / 序列化 / 异步模型 / 谁更快为什么 |
+
+**验收**：不看代码讲清「一条 20MB 的消息从客户端发出到服务端收到，中间经过哪些步骤」。
+
+---
+
+### 🔴 阶段二（D7-D12）· Chromium 线程模型在真实产品里的落地
+
+**为什么重要**：**这是 Electron/Chromium 岗位的核心考点**。你已经学过 Chromium 进程模型（图已画），
+但**线程模型没碰过**。而这个项目把 ThreadPool / WeakPtr / SEQUENCE_CHECKER 用在了生产代码里。
 
 | 日 | 任务 | 产出物 |
 |---|---|---|
-| D1 | 读 `shell_extension/omnizip_shell.cpp` 全文（仅 2 文件） | 调用链图：右键点击 → 系统加载 DLL → 谁被调用 → 菜单项怎么出来 |
-| D2 | 答三问：注册表里注册了什么？为何要 32/64 两个 DLL？`regsvr32` 做了什么 | 闭卷三问，写进当日记录 |
-| D3 | 读 `shell_extension/BUILD.gn` + 跑一次编译 | 说清这个 DLL 是怎么被构建出来的 |
-| D4 | **动手**：改一句菜单文案，编译，实机验证生效 | 编译输出 + 截图 |
-| D5 | 小结 | 一段 150 字的「Shell 扩展我做了什么」，直接可进简历 |
+| D7 | 前置课：`base::ThreadPool` / `WeakPtr` / `SEQUENCE_CHECKER` / `scoped_refptr` 各是什么 | 四个概念各一句话 |
+| D8 | 在真实代码里找出 MVC 三层约束（`CLAUDE.md` 69-79 行）的实例 | 每条约束配一处真实代码位置 |
+| D9 | 追一条完整链路：用户点「压缩」→ 投递线程池 → 后台执行 → 回 UI | 时序图（跨线程边界要标出来） |
+| D10 | **专题 WeakPtr**：找出所有 `WeakPtrFactory` 用法，答「不用它会怎样」 | ⚠️ 与你 C++ 侧刚学的 Rule of 5 / 悬空指针**直接挂钩** |
+| D11 | **动手实验**：故意在 UI 线程做一次 IO 或违反 SEQUENCE_CHECKER，看会怎样 | 崩溃/DCHECK 输出 |
+| D12 | **对照 Electron**：Electron 的主/渲染进程 vs 这里的 UI/线程池 | 对照表第 2 行：进程隔离 vs 线程隔离，各自代价 |
 
-**验收**：不看代码讲清「用户右键一个 zip 文件，从点击到菜单弹出，中间发生了什么」。
+**验收**：讲清「为什么 UI 线程禁止 IO」——不是背规则，是说出不遵守会死在哪。
 
 ---
 
-### 🟢 阶段二（D6-D10）· 主 UI 与 DuiLib
+### 🔴 阶段三（D13-D17）· Windows 安全模型 / 服务提权
 
-**目标**：`app/appmain/` 你有 32 次提交，`application.cc` 是你改最多的文件（19 次）。
-但你排第四，**这块要区分「我改过」和「我理解全局」**。
+**为什么是硬货**：`session_util.h` 里的 `GetActiveUserToken` / `TokenLinkedToken` / UAC 提权，
+**与 Chromium 沙箱是同一类知识**（都是 Windows 令牌与权限模型）。
+你已经学过 Electron 沙箱三层链，这里是它的 Windows 底层版本。
 
 | 日 | 任务 | 产出物 |
 |---|---|---|
-| D6 | 读 `app/main.cc` → `app/appmain/dllmain.cc` → `application.cc` 的启动链 | 启动时序图：exe 起来到主窗口显示 |
-| D7 | 读 `zip_main_window.cc`（你改 14 次）+ 对应 skin XML | 说清 XML 与 C++ 如何绑定 |
-| D8 | DuiLib 的 MVC 三层约束（`CLAUDE.md` 第 69-79 行）逐条找出代码实例 | 每条约束配一处真实代码 |
-| D9 | **对照 Electron**：DuiLib 的 XML+C++ vs Electron 的 HTML+JS | 对照表第一行 |
-| D10 | 小结 + 你在主 UI 里真正做的事（翻你自己的 32 次 commit） | 简历口径定稿 |
+| D13 | 前置课：Windows Session / Access Token / Primary Token / UAC 各是什么 | 四个概念各一句话 |
+| D14 | 读 `service/session_util.h/.cc` | 答：服务（Session 0）为什么**不能直接**在用户桌面弹窗 |
+| D15 | 读 `TokenLinkedToken` 提权路径 + `service_controller.cc` | 提权流程图 |
+| D16 | 答核心一问：**哪些操作必须服务做，普通进程做不了？不拆服务会死在哪** | ⚠️ 再次针对因果倒置坑 |
+| D17 | **对照 Chromium 沙箱**：Chromium 渲染进程沙箱 vs 这里的服务权限模型 | 对照表第 3 行：**这是你 Electron 沙箱知识的 Windows 底层版** |
 
-**验收**：讲清「为什么 UI 线程禁止 IO」在这个项目里具体是怎么保证的。
+**验收**：讲清「Session 0 隔离」是什么，以及它逼出了什么设计。
 
 ---
 
-### 🟢 阶段三（D11-D15）· 服务模块（你的第二个独占区）
+### 🟡 阶段四（D18-D23）· WebView 双后端抽象（含 CEF = Chromium 内核）
 
-**目标**：`service/` 你 9 次提交第一作者，**但你自述时完全没提**。这是被低估的硬技术点。
+**为什么重要**：**CEF 就是 Chromium 嵌入式框架**，与 Electron 同源。
+这个项目用一套接口同时驱动 WebView2 和 CEF —— **这是教科书级的抽象设计案例**。
 
 | 日 | 任务 | 产出物 |
 |---|---|---|
-| D11 | 读 `service/service_controller.cc`（你改 7 次） | 服务生命周期图：安装→启动→响应→停止→卸载 |
-| D12 | 读 `installer/setup/service_installer.cc`（你改 7 次） | 服务是怎么被装进系统的 |
-| D13 | 服务与主程序如何通信？找出机制 | 通信机制说明 |
-| D14 | 答一问：**为什么需要一个服务？不用服务会死在哪？** | ⚠️ 这是你历史高频坑（因果倒置），必须答「不拆开会死在哪」 |
-| D15 | 小结 | 简历第二个技术点定稿 |
+| D18 | 前置课：CEF / WebView2 各是什么，与 Electron 什么关系 | 三者关系图 |
+| D19 | 读 `webview/webview.h` 抽象接口（只读接口不读实现） | 接口清单 + 答「为什么要抽象两种后端，直接用一种不行吗」 |
+| D20 | 读 `CEF_JS_COMMUNICATION_GUIDE.md` + `CEF_READFILE_CALL_CHAIN.md` | JS→C++ 调用链图（**这是现成的调用链文档，白捡的深度**） |
+| D21 | 读 `ui/lynx_ui/lynx_window.h` 的 AppCmd 范式 | Lynx 的 JS↔C++ 通信路径 |
+| D22 | **三方对照**：CEF / WebView2 / Lynx / Electron 的 JS↔原生通信 | 对照表第 4 行（**四选一的技术选型题，面试高频**） |
+| D23 | 答：这四种 UI 方案各自什么场景选哪个 | 选型决策表 |
 
-**验收**：讲清「哪些操作必须由服务做，普通进程做不了」，并说出权限模型。
+**验收**：**本阶段每份产出开头必须写「以下内容我未参与开发，为阅读理解」。**
 
 ---
 
-### 🟡 阶段四（D16-D22）· 你没写过、但技术含量高的部分
+### 🟡 阶段五（D24-D26）· 架构设计模式专题
 
-**这是你 09-21 主张的核心**：没写过也能吃透。**这一阶段的产出必须标「吃透，非我开发」。**
+**这一段专攻「设计框架」**，是本人明确要求的部分。
 
 | 日 | 任务 | 产出物 |
 |---|---|---|
-| D16 | 读 `ipc/`（仅 5 文件） | IPC 机制说明 |
-| D17 | **对照 Electron IPC**：`ipcMain/ipcRenderer` vs 本项目机制 | 对照表第二行 |
-| D18 | 读 `webview/` 抽象层（52 文件，只读接口不读实现） | 接口清单 + 为何要抽象两种后端 |
-| D19 | **对照 Electron `BrowserWindow`** | 对照表第三行 |
-| D20 | 读 `ui/lynx_ui/lynx_window.h` 的 AppCmd 范式 | 说清 JS↔C++ 怎么通的 |
-| D21 | **三方对照**：Lynx AppCmd / WebView / Electron IPC 是同一个模式吗 | 对照表第四行 |
-| D22 | 压缩引擎集成方式（不读算法，只读怎么被集成） | 集成方式说明 |
-
-**验收**：**这一阶段每份产出开头必须写「以下内容我未参与开发，为阅读理解」。**
+| D24 | **门面模式**：`CompressService` 如何统一 6 种异构引擎（含 PDF 动态 DLL 加载） | 类图 + 答「加第 7 种引擎要改几处」 |
+| D25 | **WorkItem 事务模式**：`installer/util/` 可回滚操作单元（来自 Chromium） | 答「安装到一半失败了怎么回滚」 |
+| D26 | **EXE 壳 + DLL 分层**：为什么不做成单个 exe | 答「这么切换来了什么，代价是什么」 |
 
 ---
 
-### 🔵 阶段五（D23-D30）· 产出转化
+### 🔵 阶段六（D27-D30）· 广度 + 产出转化
 
 | 日 | 任务 | 产出物 |
 |---|---|---|
-| D23-24 | 画整体架构图（draw.io，`docs/q-framework-arch.drawio`） | 架构图，标明哪些你写过 |
-| D25-26 | 四选型对照表定稿（DuiLib / WebView / Lynx / Electron） | 面试可直接答的对照表 |
-| D27 | 简历项目描述定稿 | 200 字以内 |
-| D28 | **预演面试追问**：教练出 10 个刁钻问题，闭卷答 | 10 问答案 |
-| D29 | 补漏 | — |
-| D30 | 博客素材整理（可作为第 2 篇博客） | 大纲 |
+| D27 | 扫 `components/` 12 个子模块（登录/支付/埋点/默认程序/留存/广告） | 一张商业化桌面产品的模块全景图 |
+| D28 | 画整体架构图 `docs/q-framework-arch.drawio` | 架构图，标明哪些你写过、哪些你吃透 |
+| D29 | 简历项目描述定稿 + 四选型对照表定稿 | 200 字简历段 + 对照表 |
+| D30 | **预演面试**：教练出 10 个刁钻问题，闭卷答 | 10 问答案 |
 
 ---
 
-## 八、与 Electron 学习线的挂钩（不额外占时间）
+### 📌 前置概念清单（教练欠的，到哪天讲哪天）
 
-**原则：不是两条线，是一条线的两个样本。** W4 起每周 Electron 学到什么，当周就去 q-framework 找对应实现。
+**不假设你会任何附带知识**（09-20 本人立的硬规矩）：
 
-| Electron 学到 | q-framework 对照 | 挂钩周 |
-|---|---|---|
-| IPC（ipcMain/ipcRenderer） | `ipc/` + Lynx AppCmd | D16-17 ≈ W4 |
-| BrowserWindow 窗口管理 | `app/appmain/zip_main_window.cc` | D18-19 ≈ W5 |
-| 多进程模型 | EXE 壳 + DLL + service 进程 | D11-15 ≈ W5 |
-| 打包分发 | `installer/` | 你已有实战 ✅ |
-| 前端渲染 | Lynx vs Chromium | D20-21 ≈ W6 |
+| 概念 | 何时讲 | 概念 | 何时讲 |
+|---|---|---|---|
+| 同步/异步 I/O、IOCP | D1 | Windows Session / Session 0 隔离 | D13 |
+| 命名管道 | D1 | Access Token / Primary Token | D13 |
+| `base::ThreadPool` | D7 | UAC / TokenLinkedToken | D13 |
+| `WeakPtr` / `WeakPtrFactory` | D7 | CEF | D18 |
+| `SEQUENCE_CHECKER` | D7 | WebView2 | D18 |
+| `scoped_refptr` | D7 | 门面模式 / 事务模式 | D24/D25 |
+| COM（Shell 扩展用） | 见下 | GN / Ninja | 随用随讲 |
+
+---
+
+### ⚪ 降级说明：你写过但技术密度低的部分
+
+**Shell 扩展 / 主 UI / 安装器 UI 不单独排课**，原因：
+
+- Shell 扩展仅 2 个文件，技术点是 COM 注册与 32/64 双版本 —— **半天能讲完，不值 5 天**
+- 主 UI（DuiLib）是**将被淘汰的技术**，对 Electron 岗位无加分，只在 D8-D9 作为线程模型的载体出现
+- 安装器 UI 同理，但其 **WorkItem 事务模式**有价值，已提到 D25
+
+这三块的**简历表述**仍按第二节的 git 实查口径写（Shell 扩展可写「独立负责」），
+但**学习投入**按技术密度分配，不按提交次数分配。
+
+**如需单独准备面试话术**：D30 预演时会覆盖，不必单独占用学习日。
+
+---
+
+## 八、与 Electron / Chromium 学习线的挂钩（不额外占时间）
+
+**原则：不是两条线，是一条线的两个样本。** 每个对照点都是面试可直接答的差异化素材。
+
+| Electron/Chromium 侧 | q-framework 对照 | 挂钩日 | 对照要答清的 |
+|---|---|---|---|
+| Electron IPC（ipcMain/ipcRenderer） | IOCP 命名管道 | D6 | 传输层/序列化/异步模型/谁更快为什么 |
+| Chromium 线程模型（已学进程模型，**线程模型是缺口**） | ThreadPool + WeakPtr + SEQUENCE_CHECKER 生产用法 | D12 | 进程隔离 vs 线程隔离，各自代价 |
+| **Electron 沙箱三层链**（09-20 已结账） | Windows Token / Session 0 / UAC 提权 | D17 | **这是你沙箱知识的 Windows 底层版** |
+| Chromium 内核嵌入 | CEF（= Chromium 嵌入式框架）+ WebView2 | D20-22 | 四种 JS↔原生通信方案选型 |
+| Electron 打包分发 | `installer/` WorkItem 事务回滚 | D25 | 失败回滚怎么做 |
+| React/Lynx 前端渲染 | Lynx AppCmd vs Electron preload | D21-22 | 两种前端集成范式 |
+
+**面试落点**：这六行对照，每一行都是「只会 Electron 的人答不了」的题。
+这才是 22K → 28-32K 的实际理由 —— **不是「我会 Electron」，是「我能做桌面技术选型」**。
 
 ---
 
