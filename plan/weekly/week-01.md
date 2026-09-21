@@ -47,8 +47,11 @@
 
 **Electron 45 分钟**：
 - 建立 side project GitHub 仓库：`ai-desktop-assistant`（私有或公开都行）
-- 初始化 Electron + TypeScript 项目结构
-- 参考：[Electron + TypeScript 模板](https://github.com/electron/electron-quick-start-typescript)
+- ~~初始化 Electron + TypeScript 项目结构~~
+- ~~参考：[Electron + TypeScript 模板](https://github.com/electron/electron-quick-start-typescript)~~
+  > **09-21 核对实际产出后标作废**：`ai-desktop-assistant/package.json` 里没有任何
+  > TypeScript 依赖，全部为 `.js` 文件。这条当时就没落地，计划却一直挂着未标注，
+  > 导致 W3 的「React + TypeScript」建立在一个不存在的前提上。TS 何时引入见 `docs/frontend-prereq.md`
 - 第 1 个 commit：项目骨架
 
 **记录 15 分钟**
