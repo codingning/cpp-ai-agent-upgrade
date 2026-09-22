@@ -65,6 +65,30 @@
     - 因为vector扩容时，如果移动构造函数加了noexcept，就会采用移动构造，如果没有加，就会走拷贝构造，造成性能损失
       - day7_debt_clear.cpp（D7 无 noexcept → 两次 copy constructor / D8 有 noexcept → 两次 move constructor）
       - 机制：扩容要保证强异常安全，搬到一半抛异常无法回退，所以移动不保证不抛时宁可拷贝
+### vector 均摊与容量（W3，09-22 闭卷独立答对）
+- 扩容三件事：申请新内存 → 拷贝/移动旧元素 → 释放旧内存
+  - week-03/my_vector.h push_back
+- 翻倍扩容：push n 个总搬运量 S = 4+8+...+2^(k-1) = 2^k-4 = cap_-4
+  - 为什么 cap_ < 2n：最后一次扩容触发条件是 cap_/2 + 1 <= n → cap_ <= 2n-2 < 2n
+  - ⚠️ 前提：**至少扩容过一次**。教练实跑 n=1..100 探针：n=1、n=2 时 cap 恒为初始 4，不成立
+  - 界是紧的：n=5 时 cap=8，2n-2=8，取等
+- 迭代器失效：扩容 → 旧内存释放 → 全部失效；未扩容 → 只有 end 失效
+### copy-and-swap（09-22 结账）
+- 一个 `operator=(MyVector other)` 同时当拷贝赋值和移动赋值
+  - 形参 other 在**调用点**被构造：源是左值 → 拷贝构造填它；源是右值 → 移动构造填它。函数体不知情
+  - week-03/my_vector.cpp test4 实测：`b=a` → MyVector copy constructor；`b=std::move(a)` → MyVector move constructor
+  - ⚠️ 分辨力提醒：`MyVector<T> e = a;` 是**初始化走构造**，不是赋值，拿它测 operator= 无效
+- 强异常保证 = 可能抛的动作全部发生在碰 `*this` 之前（**不是**「出错能回滚」）
+  - 手写拷贝赋值：先 delete 再 new，new 抛 bad_alloc 时旧资源已毁 → 只有基本保证
+  - copy-and-swap：拷贝/移动构造发生在进函数体之前，失败时 `*this` 三个成员一个没动
+  - week-03 实测：异常后 size=4 cap=4 未变，析构 8 次无泄漏，退出码 0
+- swap 为什么能 noexcept：交换的是 T* 与 size_t，基本类型赋值不抛
+  - noexcept 函数真抛 → std::terminate，栈展开**前**终止，外层 try/catch 接不住
+- 自赋值：自己和自己交换无害，不需要 `if (this != &other)`
+### ❓ 待补：申请内存 ≠ 构造对象（09-22 暴露，未实现）
+- `new T[4]` 会调 T 的默认构造 → 本人 MyVector **要求 T 默认可构造**，std::vector 不要求
+- 所以 `data_[size_] = v` 只能是赋值（那个位置已有对象），扩容的 `temp[i] = move_if_noexcept(...)` 同理
+- 拆开两件事的手法：**placement new** ❓ 文档未读，未实现
 ## 工具箱
 ### 关键字
 - explicit
