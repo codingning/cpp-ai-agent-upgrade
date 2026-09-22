@@ -91,12 +91,22 @@
 - 链条：JSX → Vite 转译+打包 → `dist/` 里普通 HTML + 普通 JS → 渲染进程像加载任何网页一样加载它
 - **渲染进程完全不知道 React 和 JSX 存在**
 - ⏳ `win.loadFile('dist/index.html')` 这条本人未实跑验证
-### 🔴 Vite `base: './'` 与 Electron `loadFile`（09-22 教练所给，**未验证**）
+### 🔴 `file://` + `type="module"` → CORS 拦截（09-22 本人实验发现，**教练完全不知道的一层**）
+- 本人实测两版对照（改 `base` 前后各双击一次 `dist/index.html`）：**两版都白屏**
+- 真主因：script 带 `type="module"`，**ES 模块受 CORS 约束**，而 `file://` 不在浏览器
+  协议白名单（chrome / chrome-extension / chrome-untrusted / data / http / https / isolated-app）
+- 原始报错：`Access to script at 'file:///...' from origin 'null' has been blocked by CORS policy`
+- **路径问题与 CORS 问题是两个独立的坑**，教练原断言只覆盖了第一个
+- ⏳ 待查：Electron `loadFile` 是否走同一条路？教练判断「不能证明」但明确标注为**推测**
+  （Electron 对 `file://` 是否特殊处理，双方均不知）→ 必须在 Electron 里实跑才能结账
+### ~~🔴 Vite `base: './'` 与 Electron `loadFile`~~ ⚠️ 09-22 本人实测：教练对一半
 - 实测 `dist/index.html` 里是 `<script type="module" crossorigin src="/assets/index-BRDr3nmD.js">`
   —— 开头 `/` 是**绝对路径**（本人误认为相对路径，观察失误；其下半问推理链本身无错）
-- 教练所给未验证结论：`loadFile` 走 `file://`，`/assets/...` 会解析成磁盘根 `F:/assets/...`
-  → **白屏 + 404**；修法 `vite.config.js` 加 `base: './'`
-- 验证方式：用 Electron `loadFile` 加载该 `dist/` 看是否白屏，再加 `base` 重试对照
+- ✅ **路径部分成立**：`/assets/` 确被解析成磁盘根 `F:/assets/`（`GET file:///F:/favicon.svg
+  net::ERR_FILE_NOT_FOUND` 是干净佐证）；加 `base: './'` 后 src 变 `./assets/index-DBszTkjK.js`，
+  请求路径修正为 `file:///F:/code/vite_react/vite-project/dist/assets/...`
+- ❌ **「加了 base 就不白屏」不成立**，两版都白屏 → 见上一条 CORS
+- 本人自行完成配置修改（教练只给定位「base 是 defineConfig 顶层属性，跟 plugins 平级」，未给代码）
 ### Utility 和 Renderer 的区别
 - 09-19 记录里空缺，09-20 块 2 题 7 仍空——连续两次落地
 - ⚠️ 教练 09-19 曾在此翻车（给了一篇不含答案的 mojo_and_services.md）
