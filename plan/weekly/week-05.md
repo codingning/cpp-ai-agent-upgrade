@@ -3,6 +3,30 @@
 ## 本周主题
 
 **C++ 智能指针深度** + **Electron IPC 机制** + **记事本主/渲染进程通信**
++ 🆕 **q-framework 第三层：CEF 多进程与 IPC 链路**
+
+---
+
+## 🆕 本周 q-framework 对照轨（2026-09-22 排入，依据 `docs/q-framework-track.md`）
+
+**本周主题与 q-framework 第三层天然合流** —— 原定主题就是 Electron IPC，
+q-framework 的 CEF 侧恰好是同一问题的另一种实现。
+
+挂载：每天 17:00 段末尾 **15-20min**，下方原有内容不动。
+
+**第三层四问（刷人的一层）**：
+1. CEF 是多进程的。browser 进程和 renderer 进程之间怎么通信？
+2. C++ 调 JS、JS 调 C++ 分别走什么路？
+   （`cef/render/cef_render_appcmd_handler.cpp` → 跨进程 → `cef/browser/cef_browser_message_handler.cpp`）
+3. 跨进程传参数，`std::string` 怎么过去的？谁拥有那块内存？
+4. `ExcuteJavaScript` 带 callback，异步的。**那个 callback 在哪个线程被调用？**
+
+**额外锚点**：`ipc/` 模块是团队手写的 Windows IOCP 命名管道
+（带长度前缀序列化、最大 16MB、自动分片重组、多客户端会话管理，出处 `ipc/README.md`）。
+→ 与 Electron 内置 IPC 对照：一个手写传输层，一个框架给好。
+
+**细排**：W4 周日复盘后按本人实际进度定，不提前写死。
+前置条件：W4 门禁「第二层四问」必须先过。
 
 ## 本周目标
 

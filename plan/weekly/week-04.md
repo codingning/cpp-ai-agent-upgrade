@@ -3,6 +3,60 @@
 ## 本周主题
 
 **C++17 现代特性** + **Electron 渲染进程与 Preload** + **简历"保底版"完成**
++ 🆕 **q-framework 对照轨启动（第二层：架构理解）**
+
+---
+
+## 🆕 本周变更（2026-09-22 定，本人指令）
+
+**q-framework 对照轨从本周正式起跑。** 依据 `docs/q-framework-track.md`。
+
+三条本人指令（09-22 原话）：
+1. 「没必要替换啊，只需要把他和 Electron 对照起来就行了」→ **不替换主线，不新开时段**
+2. 「假如你是一个面试官…你先提出问题，再根据问题给我设计训练方式」→ **按面试深挖链排课**
+3. 「哪里技术含量高我哪有你判断的准」→ 改用客观判据：
+   **技术含量高 = 面试官挖得到、而他现在答不上来的那一层**
+
+本人自评结果：**第一层基本能答（缺「为什么不用 CMake」一问），第二层往后全不清楚。**
+→ 本周从**第二层**起排。
+
+**挂载方式**：每天 17:00-17:50 段**末尾 15min**，下方原有 Electron 45min 内容**一律不动**。
+15min 是保底不是上限。
+
+### 🆕 重大发现（09-22 教练实查，推翻此前「不是 Electron 所以只能类比」的判断）
+
+`webview/` 是**同一套接口 + 两种浏览器内核**的双后端架构：
+
+```
+webview/webview.h    ← 纯虚基类 QFrameWork::WebView，15 个纯虚函数
+webview/cef/         ← CEF（Chromium Embedded Framework），38 文件
+   ├── browser/      ← 对应 Electron 主进程
+   ├── render/       ← 对应 Electron 渲染进程
+   └── common/       ← 两端共用
+webview/webview2/    ← 微软 WebView2（Edge 内核），8 文件
+```
+
+`browser/` ↔ `render/` 的对称拆分**就是 Electron 的 main/renderer 拆分**，
+每一对 `*_handler` 跨进程成对出现 = `ipcMain`/`ipcRenderer` 模式。
+→ 本人手里有「同一接口两种内核」的真实工程，Electron 是第三种做法，
+**三方对照，不是类比**。
+
+### 本周 q-framework 每日 15min
+
+| 日 | 主角 | 动作（本人做，教练不代写） | 验收 |
+|---|---|---|---|
+| 周一 09-28 | 补第一层缺口 | 查 `.gn` / `BUILD.gn`，答「为什么不用 CMake」 | 能说出与 `base/` 来源的关系 |
+| 周二 09-29 | 双后端全景 | 只读 `webview/webview.h`（70 行），画出接口全貌 | 说清 `Create()` 为什么 static、`Delegate` 干什么 |
+| 周三 09-30 | 抽象的理由 | 对比 `cef/cefwebview_impl.h` 与 `webview2/webview2_impl.h` | 答：抽象基类为什么要存在，直接调 CEF 不行吗 |
+| 周四 10-01 | **抽象的破绽** | `webview.h` 第 63-68 行那六个 `#if defined(ENABLE_CEF)` 函数 | 答：为什么抽不进纯虚基类（**压轴**） |
+| 周五 10-02 | 三方对照 | CEF / WebView2 / Electron 三者进程模型 | 一张对照表，本人自画 |
+
+**名词表**（本人未标掌握的一律标注，09-20 硬规矩）：
+- **CEF** = Chromium Embedded Framework，把 Chromium 打包成库供 C++ 程序嵌入网页
+- **WebView2** = 微软方案，复用系统上**已装的 Edge 运行时**，不自带内核
+- **DuiLib** = Windows 上的 DirectUI 库，用 C++ 画原生界面，不走 HTML
+
+---
 
 ## 本周目标
 
@@ -113,6 +167,9 @@
 - [ ] Electron side project：Context Isolation 打开 + preload 暴露 API + 对话持久化
 - [ ] 简历 v0 完成初稿（1500 字左右）
 - [ ] 5 天日记 + 1 份周日复盘
+- [ ] 🆕 **q-framework 第二层四问闭卷可答**（WebView 创建链路 / 抽象基类为何存在 /
+      双后端能抽成同一接口说明什么 / 哪些地方抽不动要开后门）
+- [ ] 🆕 **CEF / WebView2 / Electron 三方进程模型对照表**（本人自画）
 
 ## 卡壳降级
 

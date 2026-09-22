@@ -85,10 +85,23 @@
 - swap 为什么能 noexcept：交换的是 T* 与 size_t，基本类型赋值不抛
   - noexcept 函数真抛 → std::terminate，栈展开**前**终止，外层 try/catch 接不住
 - 自赋值：自己和自己交换无害，不需要 `if (this != &other)`
-### ❓ 待补：申请内存 ≠ 构造对象（09-22 暴露，未实现）
-- `new T[4]` 会调 T 的默认构造 → 本人 MyVector **要求 T 默认可构造**，std::vector 不要求
-- 所以 `data_[size_] = v` 只能是赋值（那个位置已有对象），扩容的 `temp[i] = move_if_noexcept(...)` 同理
-- 拆开两件事的手法：**placement new** ❓ 文档未读，未实现
+### 申请内存 ≠ 构造对象（09-22 结账，本人自行搜索 + 改造 + 自建对照实验）
+- `new T[4]` 会调 T 的默认构造 → 要求 T 默认可构造，std::vector 不要求
+- 拆开两件事：`::operator new(n*sizeof(T))` **只要内存不构造**
+  → `::new (addr) T(...)` **placement new，只在已有内存上构造不申请**
+  → 析构时显式 `addr->~T()` 逐个析构，再 `::operator delete` 还内存
+  - week-03/my_vector.h：构造/拷贝构造/扩容/push_back 四处
+- 为什么非改不可：在没构造过的内存上调 `operator=` 是未定义行为
+  （赋值运算符是成员函数，它会去读「自己原来的状态」）
+  - `NO_PLACEMENT_NEW` 编译期对照（本人自建）：D11 加 `std::string str` 成员并在 operator= 打印
+    - 开：`constructor→copy constructor→destructor`，无 copy assignment，退出码 0
+    - 关：乱码 → **段错误 退出码 139**（读到未初始化内存当指针去 free）
+  - ⚠️ 分辨力：纯打印的探针（成员不碰）照不出这个 bug，必须有**真实持有资源的成员**
+- 扩容的异常安全回滚（本人独立改对）：`count` 提到 try 外 → catch 只析构 `[0,count)` 已构造的
+  → `::operator delete(temp)` → `throw;` 原样重抛；销毁旧元素与改 `data_/cap_` 全部挪到 try 之后
+  - Boom 探针实跑（第 3 次拷贝构造抛）：size/cap 4→4 未变、存活对象 4→4 无泄漏、
+    异常后继续 push 成功 → 强异常保证成立
+- ❓ 待想：手动 try/catch 回滚 vs RAII 守卫（unique_ptr，零 catch），标准库为什么选后者
 ## 工具箱
 ### 关键字
 - explicit

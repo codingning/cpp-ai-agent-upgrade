@@ -26,11 +26,20 @@
 - 规矩：**本文件是欠账唯一权威源**。计划文件与本文件冲突时以本文件为准，并当场改计划文件
 ## C++ 概念欠账
 ### 🔴 MyVector 隐含要求 T 默认可构造 → placement new（09-22 新增 · 本人自答暴露）
-- `new T[4]` 会调 T 的默认构造，故本人的 MyVector 装不了无默认构造的类型；std::vector 不要求
-- 本人 09-22 已独立答对三小问（new T[4] 构造了 4 个对象 / 所以只能赋值 / 标准库不要求我要求）
-- 连带：`push_back` 的 `data_[size_]=v` 与扩容的 `temp[i]=move_if_noexcept(...)` 走的都是**赋值**非构造
-- 未掌握部分：如何把「申请内存」与「构造对象」拆开 → **placement new**，文档待本人自查
-- 状态：❌ 概念缺口已确认，实现未做。**主线必补**，非扩展
+- ✅ **09-22 下午已清**：本人自行搜索 placement new 后改完三处构造 + 异常安全回滚，教练实跑全通过
+- `new T[4]` 会调 T 的默认构造 → 本人 MyVector 装不了无默认构造的类型；std::vector 不要求
+- 改造内容：`::operator new` 只要内存 + `::new (addr) T(...)` 就地构造 + 析构显式 `~T()` 再 `::operator delete`
+- **本人自建 `NO_PLACEMENT_NEW` 编译期对照实验**（D11 加 `std::string str` 成员并在 `operator=` 打印它）：
+  - 开 placement new：`D11 constructor → copy constructor → destructor`，全程无 copy assignment，退出码 0
+  - 关（走赋值）：打印 str 吐乱码 → **段错误，退出码 139**，崩前把整个进程环境变量吐到 stdout
+  - **分辨力来自 `std::string` 成员**：两种假设输出完全不同。手法本人自想
+- 扩容异常安全（教练追问后本人独立改对）：`count` 提到 try 外、catch 只清 `[0,count)`、
+  `throw;` 原样重抛、销毁旧元素与改 `data_/cap_` 全挪到 try 之后、`move_if_noexcept` 加回
+  - 教练 Boom 探针实跑（第 3 次拷贝构造抛）：`size/cap 4→4 未变`、`存活对象 4→4 无泄漏`、
+    `异常后继续 push 成功 size=5 cap=8` → **强异常保证成立**
+### ⚪ 新挂（09-22，不急）
+- 手动 try/catch 回滚 vs RAII 守卫（昨天用 unique_ptr 做过同一件事，零 catch）：
+  同为异常安全，两种写法差在哪，为什么标准库基本都选后者
 ### ⚪ 09-21 本人自评超纲、明日续做（2 项）
 - 元素级计数 vs 类级打印，为什么后者无分辨力
 - `push_back` 用 swap 改造
