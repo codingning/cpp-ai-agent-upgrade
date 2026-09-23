@@ -89,7 +89,9 @@ webview/webview2/    ← 微软 WebView2（Edge 内核），8 文件
 
 **Electron 45 分钟**：
 - 阅读 [preload script](https://www.electronjs.org/docs/latest/tutorial/tutorial-preload)
-- 在 side project 中添加 preload.ts
+- 在 side project 中添加 ~~preload.ts~~ **`preload.js`**
+  （**09-23 改**：实查 `package.json` 无 TypeScript、项目全 `.js`。
+  week-01 第 50 行排的 TS 从未落地，已在 `docs/frontend-prereq.md` 6.2 标 W1-W6 作废）
 - 用 contextBridge.exposeInMainWorld 暴露一个测试 API
 
 **记录 15 分钟**
@@ -117,7 +119,12 @@ webview/webview2/    ← 微软 WebView2（Edge 内核），8 文件
 
 **Electron 45 分钟**：
 - side project：实现"新建对话"和"切换对话"的 UI
-- 状态管理：暂时用 useReducer，不引入 Redux
+- ~~状态管理：暂时用 useReducer，不引入 Redux~~
+  **🔴 09-23 改为 `useState`**：`docs/frontend-prereq.md` 实测本人 React 零基础，
+  `useState` 本身排在 W3D5（09-25）才第一次学。`useReducer` 比 useState 更抽象
+  （要同时理解 reducer 函数 + action 对象 + dispatch 三个新概念），
+  在他刚学会 useState 一周内排它是叠加两层未知。
+  **useReducer 顺延至 W6，不作废**；本日用 `useState` 数组 + 一个 `currentId` 即可。
 
 **记录 15 分钟**
 

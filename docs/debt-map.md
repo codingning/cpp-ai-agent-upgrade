@@ -126,6 +126,42 @@
   但防护是**串联**的——第一层塌了后两层拦不住从第一层进来的人。
   官方原话：关 Node 集成可防止 XSS 升级成 RCE；开着时页面脚本直接有 `require('child_process')`，
   攻击者根本不需要偷 preload 的 API
+## 🔴 前端前置断层（09-23 新增，主线必补非扩展项）
+
+> 来源：`docs/frontend-prereq.md` 本人 09-23 亲填 28 项 + 教练当日写结论区 6.1/6.2。
+> **这是整个 Electron/React 主线的地基**，不补则后续每节课都会卡在语法而非卡在概念。
+
+### ❌ JS 四项语法（本人自评「不会」）
+- 箭头函数 `() => {}`、解构赋值 `const {a,b}=obj`、展开运算符 `...`、`async/await`+Promise
+- **本人 09-23 原话（关键证据）**：「用过箭头函数、解构、async/await，
+  **但是 Electron 主进程是我从教程里拷贝的，所以并不是全部了解**」
+- **教练 09-22 出错**：据「他代码里出现过这些语法」推断「他会」→ 推断作废。
+  教训定名：**用过 ≠ 会写**，拷贝来的代码里出现某语法不构成掌握证据
+- 补法：**不单独开语法课**，寄生在 React 课里（箭头函数+解构挂组件/props，
+  数组解构+展开挂 useState，async/await 挂 W4 的 IPC 异步）
+- 排期：W3D4（09-24）起，见 `plan/weekly/week-03.md` 周四/周五重排段
+
+### ❌ React 四件套（全零基础，本人点名前三「连大概想干什么都说不出」）
+- 组件/props → W3D4 ｜ useState → W3D5 ｜ useEffect → W3 周六 ｜ 构建时vs运行时 → 09-23 下午段 B
+- 状态：`useReducer` **顺延 W6**（原排 W4 周四，比 useState 更抽象，已改为 useState）
+
+### ❌ npm 工具链（三项均「只知道是什么，没跑过」）
+- `npm init` / `package.json` / `npm run X` —— 排 W3D4 15min，必须亲手跑
+- 验收：闭卷答「`npm run hello` 时 npm 做了什么，它怎么知道 hello 是什么」
+
+### 🚫 已正式作废（非顺延）
+- **TypeScript**：week-01 第 50 行排过，09-21 已核实从未落地（`package.json` 无 TS 依赖）。
+  **09-23 正式标 W1-W6 作废**，理由：JS 本体四项都没过关，加 TS 是负担不是助力。W7 后视情况重排
+- **原生 DOM / `addEventListener` / HTML+`<script>`**：本人三项全「不会」，
+  但**不在 React 主线路径上**（React 用 `onClick`，不需要先会 `addEventListener`），
+  且本人 09-21 立场「AI 时代手写 DOM 无意义」成立。**不排补课**，
+  只在 React 事件课上标一行「原生对应物是什么」
+
+### ✅ 已确认不是断层（有本人闭卷证据，不重复排课）
+- Vite 的作用、什么是打包（09-22 Q1/Q3 独立答对）
+- 开发者工具会看（工作中与前端对接用过）｜ CSS 基本布局（DuiLib XML 经验可迁移）
+- 「React 组件不能直接 `require('fs')`」（09-23 本人答对，理由「渲染进程沙箱化」成立）
+
 ## 产出欠账
 ### 🆕 q-framework 吃透（09-21 本人提出，教练采纳）—— 简历主项目
 - 详见 `docs/q-framework-map.md`。本人真实职责：主 UI / 照片压缩 / Shell 扩展，Lynx UI 少量

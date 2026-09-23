@@ -106,11 +106,65 @@
 
 ## 🔴 欠我的一件事（09-22 排了没回，今天第一句话回我）
 
-`docs/frontend-prereq.md` 的「**你实际会**」那一列**全空**，28 项一个没填。
-结构是我起的，内容只有你能填 —— 这张表不填，React 那条线我没法排课，
-只能继续靠猜你会什么，而**靠猜排课正是 09-21 出计划缺陷的原因**。
+**✅ 09-23 14:4x 已完成。** 本人填完 28 项，教练当场写完结论区 6.1/6.2/6.3
+并按本人指令「现在就改，不要晚上」改完 W3/W4 六处 + debt-map 新增整节。
 
-四档标注：独立能做 / 看文档能做 / 听过不会用 / 没听过。
+**填表结果（这是今天最大的发现，比上午段的 C++ 重要）**：
+原排课前提「他会 JS，缺的是 React」**被推翻**——JS 四项语法（箭头函数/解构/展开/async-await）
+本人自评**全「不会」**。关键证据是本人自己点破的：
+「Electron 主进程是我从教程里拷贝的，所以并不是全部了解」→ **用过 ≠ 会写。**
+
+→ W3 剩余三天改为：**周四 npm 工具链 + 组件/props ｜ 周五 useState ｜ 周六 补齐 + useEffect**。
+JS 语法不单独开课，寄生在 React 练习里（`const [a, setA] = useState()` 一行同时是
+useState 用法 + 数组解构，互为记忆锚点）。
+
+---
+
+## ✅ 上午段已结账（09-23 10:30-11:1x + 14:1x-14:4x 补讲）
+
+**迭代器失效四题**：Q1 ✅ 独立答对（扩容→全失效 / 不扩容→只 end 失效，自己从昨天
+placement new 搬运循环推出来的）｜ Q2 ⚠️ 漏扩容分支（第 1 题答对的规则第 2 题只用了一半）
+｜ Q3 ❌ 错（答「全部失效」，实为 map/set 节点式：insert 不失效任何、erase 只失效被删的）
+｜ Q4 ⚠️ 结论对理由缺（rehash **废迭代器、不废指针和引用**）
+
+**教练实跑探针**：`%LOCALAPPDATA%\Temp\iter_probe.cpp`（MSVC /std:c++17）
+- map：`find(2)` 地址 `...80C40`，插 100 个 + `erase(4)` 后地址不变、值仍 20、`++it` 正常
+- unordered_map：`bucket_count 8 → 512`（真 rehash），但 key=2 地址不变，旧地址仍读出 20
+- vector：`cap 4 → 6`（MSVC 是 1.5 倍不是 2 倍），`v[2]` 地址 `...A898 → ...A9D8` 变了
+- `reserve(10)` 不扩容那版：地址不变 ✅
+
+**map vs unordered_map 五条判据**（本人问「不知道什么场景故意选更慢的 map」，教练讲）：
+①有序（遍历有序 + `lower_bound`/`upper_bound` 动态范围查询）②迭代器稳定
+③最坏复杂度有保证（哈希碰撞可被恶意构造 = **HashDoS**）④key 只要 `operator<`
+⑤不需预估规模（unordered_map 要 reserve）
+
+**key 要求实测**（`%LOCALAPPDATA%\Temp\key_probe.cpp`）：
+- `std::map<K,V>` 要 K 有 `operator<`（默认 `std::less<K>`）
+- `std::unordered_map<K,V>` 要**两样**：`std::hash<K>` 有特化 + `K` 支持 `operator==`
+- **enum class 两边都能用**（C++14 起标准要求 enum 有 `std::hash` 特化，实测 hash 值 12478008331234465636）
+- **自定义类只有 map 现成能用**：`unordered_map<自定义struct>` 实测 `xhash(118) error C2064`
+
+**q-framework 实证坐标（教练实查，非举例）**：`std::map` 1473 处、`std::unordered_map` 638 处（排除 base/）
+- `components/pref/pref_service.h:125` `std::map<std::string, std::vector<Observer*>>` ——
+  本人**实读代码后答对**：`NotifyPrefChange`（494-499 行）循环体里只调 `o->OnPrefChanged(key)`，没改 map ✅
+- `ui/dui/Control/UIMenu.cpp:1417` `std::map<CDuiString, bool>` —— CDuiString 是 DuiLib 自有类，
+  `std::hash` 不认识它，**这才是「选 map 是成本考量不是性能考量」的真实证据**
+
+**遗留给本人的一问（不限今天）**：`OnPrefChanged` 是虚函数，若某个 Observer 在
+`OnPrefChanged` 里调了 `RemoveObserver`，会发生什么？（第 2 条「迭代器稳定」真正咬人的形态）
+
+---
+
+## 📌 教练今天出错 2 次（记录在案，不遮）
+
+1. 要本人「自己把『有序』拆成遍历有序 vs 动态范围查询」——他根本不知道 `lower_bound`
+   是什么，**这不该他想，该教练先给定义**。已撤回该要求。
+2. 断言「enum class 进 unordered_map 其中一个编译不过」——**没跑就说，实测两边都过**。
+   **同类老毛病：未验证的断言直接出口。**
+
+本人对上午段的评价「今天的 C++ 没有什么知识，只回答了一些我已知的东西」——
+**教练接受排课失误那一半**（迭代器失效是查文档即得的记忆型内容，不该占满 40min），
+**驳回另一半**（Q3/Q4 实际答错，不难 ≠ 已知）。
 
 ---
 

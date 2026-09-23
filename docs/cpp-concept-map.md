@@ -73,6 +73,44 @@
   - ⚠️ 前提：**至少扩容过一次**。教练实跑 n=1..100 探针：n=1、n=2 时 cap 恒为初始 4，不成立
   - 界是紧的：n=5 时 cap=8，2n-2=8，取等
 - 迭代器失效：扩容 → 旧内存释放 → 全部失效；未扩容 → 只有 end 失效
+  - ✅ **09-23 闭卷独立答对**（本人自己从昨天 placement new 搬运循环推出来的）
+  - 实测（`iter_probe.cpp`）：`cap 4→6` 时 `v[2]` 地址 `...A898→...A9D8` 变；
+    `reserve(10)` 不扩容版地址不变。⚠️ **MSVC 增长是 1.5 倍不是 2 倍**
+### 容器选型：map vs unordered_map（W3，09-23 教练讲 + 实测）
+- 五条「故意选更慢的 map」的理由：
+  1. **有序** —— 拆成两件事：①遍历即升序 ②`lower_bound`/`upper_bound` **动态范围查询**
+     - `lower_bound(X)` = 第一个 key **≥ X** 的迭代器；`upper_bound(X)` = 第一个 key **> X**；找不到返回 `end()`
+     - `[lower_bound(A), upper_bound(B))` = 所有 key 落在 [A,B] 的元素
+     - **unordered_map 没有这两个函数**：哈希把 key 打散进桶，桶内顺序与 key 大小无关
+     - ⚠️ 只有①能靠「存完再排一次序」补上；②补不上（排序是一次性快照，插一个就作废）
+  2. **迭代器稳定**（见下「迭代器失效·关联容器」）
+  3. **最坏复杂度有保证** —— 红黑树最坏 O(log n)；哈希碰撞可退化 O(n)。
+     key 来自外部输入且攻击者可控时 = **HashDoS**。浏览器里 URL/域名/header/cookie/DOM id 全是外部输入
+     - ⚠️ HashDoS 攻击形态本身确定；**Chromium 哪个模块因此选有序容器，教练未实查，不得当结论**
+  4. **key 的成本** —— 见下「key 要求」。自定义类型进 map 只欠一个 `operator<`
+  5. **不需预估规模** —— unordered_map 要 `reserve` 才能避免反复 rehash
+- **key 要求**（`key_probe.cpp` MSVC 实测）：
+  - `std::map<K,V>`：K 要能比大小（默认 `std::less<K>` → 要 `operator<`）
+  - `std::unordered_map<K,V>`：要**两样** —— `std::hash<K>` 有特化 **且** K 支持 `operator==`
+    （先算 hash 定桶，桶内再逐个 `==` 比对）
+  - 标准库已特化 `std::hash` 的：内置整数/浮点/指针、`std::string` 系列、**以及枚举类型**（C++14 起标准要求）
+  - ✅ 实测 `unordered_map<enum class, int>` **C++17 / C++14 均编译通过**，hash=12478008331234465636
+    - 📌 **教练 09-23 出错**：断言「enum class 那题其中一个编译不过」，**没跑就说，实测两边都过**，已收回
+  - ❌ 实测 `unordered_map<自定义struct>` 编译失败：`xhash(118) error C2064`（无 `std::hash` 特化）
+  - **q-framework 实证**：`ui/dui/Control/UIMenu.cpp:1417` 的 `std::map<CDuiString, bool>` ——
+    CDuiString 是 DuiLib 自有类，`std::hash` 不认识它 → **选 map 是成本考量，不是性能考量**
+### 迭代器失效 · 关联容器（W3，09-23）
+- **`map`/`set`（节点式，红黑树）**：元素各自在堆上独立分配，插入不搬动别人
+  - `insert` → **不失效任何迭代器**；`erase` → **只失效被删的那一个**
+  - ❌ 本人 09-23 答「全部失效」，错。实测：`find(2)` 地址 `...80C40`，
+    插 100 个元素 + `erase(4)` 后地址不变、值仍 20、`++it` 正常跳到下一个存活元素
+- **`unordered_map` rehash**：**使迭代器失效，但不使指向元素的指针和引用失效**
+  - ⚠️ 本人 09-23 结论对（「全失效」）但理由缺，且这层区别正好被跳过
+  - 实测：`bucket_count 8 → 512`（真 rehash 了），但 key=2 的**元素地址前后不变**，
+    用旧地址仍读出 20 → **搬的是桶数组里的指针，不是节点本身**
+  - 📌 待本人核 cppreference unordered_map 页原文后销账
+- **`vector::insert`**：与 `push_back` 同理 —— **扩容则全失效**；不扩容才只失效「插入点及其后」
+  - ⚠️ 本人 09-23 只答了后半句。形态定名：**同一份规则在相邻两题里只用了一半**
 ### copy-and-swap（09-22 结账）
 - 一个 `operator=(MyVector other)` 同时当拷贝赋值和移动赋值
   - 形参 other 在**调用点**被构造：源是左值 → 拷贝构造填它；源是右值 → 移动构造填它。函数体不知情
