@@ -69,11 +69,20 @@
 - 五问结果：Q1 对、**Q3 独立答对**（Vite 不打包直接喂模块 vs 传统全打 bundle 再启动，答得比题目准）、
   Q2 大意对缺细节、**Q4 答不出**、Q5 结论对但理由不成立
 - 出处已实抓：Vite 官方中文文档 `cn.vitejs.dev/guide/why.html`
-### 🔴 沙箱掉了之后攻击者站在哪个进程（09-22 复测答错，重新挂账）
+### ~~🔴 沙箱掉了之后攻击者站在哪个进程~~ ✅ **09-23 结账**（隔一天重考独立答对）
+- **09-23 16:41 本人闭卷原话**：「攻击者拿到了渲染进程的权限，不能直接让主进程替他干活，
+  因为两个进程是独立的，渲染进程和主进程是通过 ipc 通信的」——**三点全中，独立**
+- 追问「沙箱开着 vs 掉了，拿到的『渲染进程权限』有何区别」（16:44 原话）：
+  「沙箱是利用 windows 的一些机制实现的，沙箱打开时，渲染进程不能访问进程的 os 权限，
+  不能操控文件系统等」→ **OS 约束那一层也补上了**
+- 09-22 答错，09-23 独立答对 → 本条清账。以下为 09-22 的错答留档：
 - 本人答「拿到主进程的权限」。**错**：拿到的是**渲染进程那个 OS 进程**的权限
 - 渲染进程与主进程是两个独立 OS 进程，打穿一个不等于拿到另一个；想让主进程干活仍须发 IPC
 - 09-20 本人自核文档时这条答对过 → 今天记成了「掉了很严重」，丢了「严重在哪个进程上」
-### 🟡 contextIsolation 掉了：共享 window 的主动攻击面（09-22 答对但不完整）
+### ~~🟡 contextIsolation 掉了：共享 window 的主动攻击面~~ ✅ **09-23 结账**（独立说出）
+- **09-23 16:41 本人闭卷原话**：「还能改 `Array.prototype.push` 这类内置方法，
+  然后等高权限代码来调用他」——**正是 09-22 缺的那句，今天独立写出**
+- 以下为 09-22 留档：
 - 本人只答「拿到 preload 的权限」（被动）
 - 缺：两者共享同一个 `window`，攻击者可改 `Array.prototype.push` 等内置方法，
   **等高权限代码来调用他** —— 这句 09-20 本人自己写过，今天没写出来
@@ -83,31 +92,53 @@
   「串联」看**攻击路径**（门的顺序）。`nodeIntegration:true` 时门还立着，但不在攻击者路上
 - ⚠️ 本人在教练的场景题里其实已把三点全答中（能 require / 它拦的是 preload 权限 / 攻击者不需要它），
   **缺的只是收成结论那一步**，不是缺理解
-### 🔴 构建时 vs 运行时的分界（09-22 Q5 理由不成立，新挂）
+### ~~🔴 构建时 vs 运行时的分界~~ ✅ **09-23 结账**（三问全对）
+- **09-23 16:50 本人闭卷原话**：「1. JSX 是编译时消失的 2. React 拿到的是已经转译好的
+  普通 JS 函数调用结果，没有机会看到 JSX」——**「没有机会看到 JSX」就是 09-22 那个错理由的正解**
+- 以下为 09-22 留档：
 - 本人答「React 只是一个库，不能自己把 JSX 转成 JS」——**是不是库与能否转译无关**
 - 正解：JSX 转译是**构建时**的事（`vite build` 那一刻，在开发机上）；
   React 是**运行时**的库，它拿到的已是转译完的产物，压根没机会看到 JSX
-### 🔴 `vite build` 产物如何进 Electron（09-22 Q4 答不出，教练所给）
+### ~~🔴 `vite build` 产物如何进 Electron~~ ✅ **09-23 结账**（从「教练所给」转为本人已掌握）
+- **09-23 16:50 本人闭卷原话**：「`vite build` 以后，把 jsx 变成了 dist 目录下的几个文件
+  index.html 和一堆 .js/.css，Electron 渲染进程用 loadURL（dev）或 loadFile（prod）去加载」
+- 09-22 这一问答不出、教练直接讲并标「教练所给、未验证」；**09-23 本人自己说出来了**
 - 链条：JSX → Vite 转译+打包 → `dist/` 里普通 HTML + 普通 JS → 渲染进程像加载任何网页一样加载它
 - **渲染进程完全不知道 React 和 JSX 存在**
-- ⏳ `win.loadFile('dist/index.html')` 这条本人未实跑验证
+- ✅ `loadFile` 已本人实跑验证（见下条），不再是未验证项
 ### 🔴 `file://` + `type="module"` → CORS 拦截（09-22 本人实验发现，**教练完全不知道的一层**）
 - 本人实测两版对照（改 `base` 前后各双击一次 `dist/index.html`）：**两版都白屏**
 - 真主因：script 带 `type="module"`，**ES 模块受 CORS 约束**，而 `file://` 不在浏览器
   协议白名单（chrome / chrome-extension / chrome-untrusted / data / http / https / isolated-app）
 - 原始报错：`Access to script at 'file:///...' from origin 'null' has been blocked by CORS policy`
 - **路径问题与 CORS 问题是两个独立的坑**，教练原断言只覆盖了第一个
-- ⏳ 待查：Electron `loadFile` 是否走同一条路？教练判断「不能证明」但明确标注为**推测**
-  （Electron 对 `file://` 是否特殊处理，双方均不知）→ 必须在 Electron 里实跑才能结账
+- ✅ **09-23 结账（本人实跑，教练那句「推测」被证伪一半）**：Electron 里**不走同一条路**。
+  本人自建最小 Electron 壳（`F:/code/vite_react/vite-project/main.cjs` +
+  `scripts/electron-smoke.cjs`，选的是教练三选项里第 3 个「新建最小壳」），两版对照实跑：
+  - **无 base** → `src="/assets/index-BjGiThP1.js"`，**白屏**，控制台 `net::ERR_FILE_NOT_FOUND`
+  - **有 `base:'./'`** → `src="./assets/index-DMtXDnJR.js"`，**不白屏，React 真渲染出来**
+  → 结论两条且互相独立：①**无 base 白屏不是 CORS，是路径**（绝对路径在 `file://` 下
+  被解析到盘符根）；②**有 base 不白屏 ⇒ Electron 对自己的 `file://` 放行了 `type="module"`**
+  —— 同协议同 module 脚本，浏览器双击被 CORS 拦（09-22 实测），Electron 里能跑
+- ⚠️ **本人第一版结论是猜的**：说「无 base 会白屏」时没看控制台，CORS 和 404 都产生白屏
+  → **实验分辨力第五次同类**，被追问后才去看控制台拿到 `ERR_FILE_NOT_FOUND`。
+  比 09-18「被指出才明白」进一档、比 09-22「动手前自己识别」退一档，**判为不稳定非退步**
+- **自洽性交叉核对（教练）**：报错文件名 `index-BjGiThP1.js` 与当日 build 产物
+  `index-DMtXDnJR.js` **哈希不同** → 证明确实重新 build 了两版，不是改配置没重跑
 ### ~~🔴 Vite `base: './'` 与 Electron `loadFile`~~ ⚠️ 09-22 本人实测：教练对一半
 - 实测 `dist/index.html` 里是 `<script type="module" crossorigin src="/assets/index-BRDr3nmD.js">`
   —— 开头 `/` 是**绝对路径**（本人误认为相对路径，观察失误；其下半问推理链本身无错）
 - ✅ **路径部分成立**：`/assets/` 确被解析成磁盘根 `F:/assets/`（`GET file:///F:/favicon.svg
   net::ERR_FILE_NOT_FOUND` 是干净佐证）；加 `base: './'` 后 src 变 `./assets/index-DBszTkjK.js`，
   请求路径修正为 `file:///F:/code/vite_react/vite-project/dist/assets/...`
-- ❌ **「加了 base 就不白屏」不成立**，两版都白屏 → 见上一条 CORS
+- ❌ **「加了 base 就不白屏」在浏览器双击下不成立**，两版都白屏 → 见上一条 CORS
+- ⚠️ **09-23 补正（教练当日第 3 次出错的落点）**：这句话在 **Electron `loadFile` 里成立**，
+  在**浏览器双击下不成立**。**同一句话两种环境两种结果** —— 教练 09-22 给的是一个
+  **没限定环境**的结论。今后凡涉及 `file://` 行为的断言，必须写明「在哪个宿主里」
 - 本人自行完成配置修改（教练只给定位「base 是 defineConfig 顶层属性，跟 plugins 平级」，未给代码）
-### Utility 和 Renderer 的区别
+### Utility 和 Renderer 的区别 · 🔴 **连续第五次落地（09-19/20/21/22/23）**
+- ⚠️ **这条是教练的账，不是本人的**：一直没布置下去，因为出处未实读确认。
+  教练 09-23 承诺「本周内给出处」，**本周只剩 09-24 一天，逾期算教练欠本人**
 - 09-19 记录里空缺，09-20 块 2 题 7 仍空——连续两次落地
 - ⚠️ 教练 09-19 曾在此翻车（给了一篇不含答案的 mojo_and_services.md）
 - 已确认覆盖的一句（Electron tutorial/sandbox）：除主进程外多数进程都在沙箱内，
@@ -217,3 +248,64 @@
 ### ✅ preload + contextIsolation（基础层，A4 整链仍欠）
 ### ✅ 语境转换（09-18 讲解 + 自己画进图里）
 ### ✅ Menu 接线 + 菜单份数（09-18 实验验证）
+
+---
+
+## 🆕 09-23 新挂 / 顺延（W3D3）
+
+### 🔴 C++ 迭代器失效：map/set 与 rehash 两条答错（09-23 闭卷）
+- **Q3 ❌ 错**：本人答「map/set 的 insert/erase 全部失效」。
+  **实为节点式容器**：`insert` 不失效任何迭代器、`erase` 只失效被删的那一个
+- **Q4 ⚠️ 结论对理由缺**：rehash **废迭代器、不废指针和引用**（节点没搬，桶数组重建了）
+- **Q2 ⚠️ 漏扩容分支**：`vector::insert` 答「插入位置及之后失效」，
+  漏掉「若触发扩容则全部失效」——**第 1 题答对的规则第 2 题只用了一半**
+- ✅ **Q1 独立答对且给机制**：自己从 09-22 亲手写的 placement new 搬运循环推出来的
+- **教练实跑证据**（`week-03/iter_probe.cpp`，MSVC `/std:c++17`）：
+  map `find(2)` 地址 `...80C40` → 插 100 个 + `erase(4)` 后地址不变、`++it` 正常跳到 100；
+  unordered_map `bucket_count 8 → 512`（真 rehash）但 key=2 地址不变；
+  vector `cap 4 → 6`（⚠️ **MSVC 是 1.5 倍不是 2 倍**）、`v[2]` 地址 `...A898 → ...A9D8` 变了；
+  `reserve(10)` 预留后不扩容那版地址不变
+- 状态：⏳ **顺延 09-24 上午闭卷重答**
+
+### 🔴 三问未答（09-23 21:31 教练布置，本人未回）
+1. `map` 慢，什么场景**故意**选它？——「有序」不够，要落到 q-framework 里具体哪种数据
+   （本人 14:24 原话「真让我想，我一时想不起来，可能还需要翻代码查找，还不一定能找到」）
+2. rehash 之后**迭代器**和**元素地址**是不是同一回事？失效的到底是什么东西？
+3. vector 扩容失效，标准为什么写「**可能**」不写「**一定**」？
+- 状态：⏳ **顺延 09-24 上午闭卷**
+
+### 🟡 `lower_bound` / `upper_bound`（09-23 教练已给定义，本人未复述）
+- **本人 14:24 原话**：「我根本不知道 map `lower_bound`/`upper_bound` 分别是什么意思，
+  也不清楚需要分成『遍历有序』和『动态范围查询』两件事」
+- ⚠️ **教练当日在此出错**：要求本人「自己把『有序』拆成两件事」，
+  但他根本不知道 `lower_bound` 是什么 —— **违反 09-20 硬规矩**（出题不许假设附带知识），已撤回
+- 按 09-20 规矩「记录里没标掌握的一律按没掌握处理」→ 状态 ⏳ **顺延 09-24 闭卷复述**
+
+### 🟡 「迭代器稳定」真正咬人的形态（09-23 遗留一问，未答）
+- `components/pref/pref_service.h:125` 的 `std::map<std::string, std::vector<Observer*>>`，
+  `NotifyPrefChange`（494-499 行）循环里调 `o->OnPrefChanged(key)` 是**虚函数**。
+  **若某个 Observer 在 `OnPrefChanged` 里调了 `RemoveObserver`，会发生什么？**
+- ✅ 本人已**实读代码**答对前半问（「`NotifyPrefChange` 里没改这个 map 里的数据」）
+- 状态：⏳ 不限今天，但要答
+
+### ⚠️ MSVC `__cplusplus` 假值陷阱（09-23 教练实跑发现）
+- `key_probe.cpp` 默认编译打出 `__cplusplus = 199711`（C++98 的值），
+  **那是 MSVC 不加 `/Zc:__cplusplus` 时的假值**，加开关后为 `201402`
+- ⚠️ **若本人据 199711 推过任何结论，一律作废重推**
+- 含义：以后凡想靠 `__cplusplus` 判断标准版本，在 MSVC 上都要先确认这个开关
+
+### ⚠️ 教练 09-23 出错：enum class 进 unordered_map 断言未跑（第 4 次犯断言纪律）
+- 教练断言「enum class 进 `unordered_map` 其中一个编译不过」——**没跑就说，实测两边都过**
+  （C++14 起标准要求 enum 有 `std::hash` 特化，实测 hash 值 12478008331234465636）
+- 实测真正编译不过的是**自定义 struct**：`xhash(118): error C2064`，`CL_EXIT=2`
+
+### 🔴 版本记录缺口（09-23 教练实查）
+- `F:/code/vite_react/vite-project` **根本不是 git 仓库**（`git log` 报
+  `fatal: not a git repository`）→ 09-23 写的 `main.cjs`、`scripts/electron-smoke.cjs`
+  **全无版本记录**。⏳ 09-24 先 `git init`（`.gitignore` 挡 `node_modules/` 与 `dist/`）
+- `F:/code/cpp-practice/week-03/iter_probe.cpp`、`key_probe.cpp` 未 commit。
+  ⚠️ **这两个是教练写的探针，不是本人练习代码**，commit message 要标明来源，勿混入本人产出
+
+### 📌 元规则「先写预测」第七次未见书面执行（09-23）
+- 教练 17:01 明确要求「我认为 Electron 里会 / 不会白屏，因为 ___，先写预测再跑」
+- 仓库内与会话内**均未见本人写下的那句预测**
