@@ -145,9 +145,33 @@ const MessageItem = ({ text }) => ( ... )   // 第二版：箭头函数 + 解构
 
 **Utility vs Renderer 的区别 —— 连续第五次落地。**
 
-这条一直没布置给你，不是你没做，是**我欠你一次文档实读**
-（`process_model_and_site_isolation.md` / `sandbox.md`）。
-我 09-23 承诺「本周内给出处」，**本周只剩今天**。今天不给，这条算我的账，不算你的。
+这条一直没布置给你，不是你没做，是**我欠你一次文档实读**。
+我 09-23 承诺「本周内给出处」，**09-24 09:2x 已实抓，账结了**。
+
+⚠️ 09-19 我曾在这条上翻车（给了 `mojo_and_services.md`，那里根本没这内容）。
+这次的出处是我真抓到原文、并把句子抄在下面的，**两处都可核**：
+
+**出处 1 · `chromium.org` 设计文档 `Multi-process Architecture` → 末节 `Additional Process Types`**
+> 原文：`Chromium has split out a number of other components into separate processes as well,`
+> `sometimes in platform-specific ways. For example, it now has a separate GPU process,`
+> `network service, and storage service. Sandboxed utility processes can also be used for`
+> `small or risky tasks, as one way to satisfy the Rule of Two for security.`
+
+**出处 2 · Chromium 仓库 `docs/servicification.md` → `Hooking Up the Service Implementation`**
+> 原文：`For out-of-process service launching, Content uses its "utility" process type.`
+> 注册点：`//content/utility/services.cc`、`//chrome/utility/services.cc`；
+> 拉起方式：`ServiceProcessHost::Launch`。
+
+**我只给出处，不给答案。** 这两段 + 你 09-19 已画的四进程图，够你自己读出区别了。
+闭卷两问（今天不做就顺延 09-28，不作废）：
+1. Renderer 和 Utility 都在沙箱里、都不可能随便碰文件系统 —— 那**区别到底在哪一层**？
+   （提示方向：这两种进程里跑的**代码是谁写的**？不用回答提示，回答问题。）
+2. 网络栈（network service）既然可以进 Utility，**为什么不干脆放进 Renderer**？
+   出处 1 里「Rule of Two」那半句是线索，它是什么你可以问我。
+
+> **它是什么 · Rule of 2**：Chromium 的安全硬规矩——「处理不可信输入」「用不安全语言（C/C++）写」
+> 「不在沙箱里」三件事，**最多只能同时满足两件**。三件全中就必须拆进程或换语言。
+> 这条我只给定义，它和上面两问的关系你自己接。
 
 ---
 
