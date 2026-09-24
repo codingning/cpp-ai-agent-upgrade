@@ -111,13 +111,28 @@
   - 📌 待本人核 cppreference unordered_map 页原文后销账
 - **`vector::insert`**：与 `push_back` 同理 —— **扩容则全失效**；不扩容才只失效「插入点及其后」
   - ⚠️ 本人 09-23 只答了后半句。形态定名：**同一份规则在相邻两题里只用了一半**
-- ❓ 待答（09-23 布置未回，顺延 09-24 闭卷）：`map` 慢，什么场景**故意**选它？
+- ❓ 待答（09-23 布置，**09-24 两轮又绕开，第二次**，顺延 09-28）：`map` 慢，什么场景**故意**选它？
   ——「有序」不够，要落到 q-framework 里具体哪种数据 / 哪种 key 进不了 `unordered_map`
-- ❓ 待答（同上）：rehash 之后**迭代器**和**元素地址**是不是同一回事？失效的到底是什么东西？
-- ❓ 待答（同上）：vector 扩容失效，标准为什么写「**可能**」不写「**一定**」？
-- ❓ 待答：`lower_bound(k)` / `upper_bound(k)` 各返回什么？`k` 不存在时呢？
-  「遍历有序」与「动态范围查询」为什么是两件不同的事？
-  （09-23 教练已给定义但本人未复述；按 09-20 规矩「没标掌握的按没掌握处理」）
+  **允许答「翻了没找到」，不允许继续不答**
+- ✅ **09-24 答对（本人原话）**：rehash 之后迭代器与元素地址**不是同一回事** ——
+  「**节点没搬，搬的是桶里指针、没搬的是节点**」。这解释了两件事为何同时成立不矛盾。
+  ⚠️ **但本人自己指出该探针是教练跑的，对他是二手证据** → **09-28 自己重跑 `key_probe.cpp` 才算结账**
+- ✅ **09-24 答对**：vector 扩容失效标准写「可能」不写「一定」—— 不扩容时只有 `end()` 失效；
+  且追问的 `vector::insert` 也答对（「插入点之后全失效，触发扩容则全部失效」），
+  与 cppreference 原文 `Otherwise, only the iterators and references before the insertion point remain valid.` 一致
+- ✅ **09-24 第二轮答对**：`lower_bound(k)` = 第一个 **≥k** 的迭代器，`upper_bound(k)` = 第一个 **>k**；
+  **end 的触发条件是「没有 ≥k / >k 的 key」，不是「k 不存在」**。
+  ❌ 第一轮答「k 不存在时返回 end」被教练实跑驳回（MSVC `map{1,3,5}`）：
+  `lower_bound(2)` → `key=3`（2 不存在但不是 end）；`lower_bound(7)` → `end`
+- ❓ **待答（09-24 遗留，顺延 09-28）**：「遍历有序」vs「动态范围查询」的判据还差一层 ——
+  本人答「插入就把排序打乱了」**不严谨**（插到 `lower_bound` 算出的正确位置上 `vector` 照样有序）。
+  真代价是「后面的元素要**搬**」，这是 O(?)，`map` 是 O(?)
+- ❓ **待答（09-24 遗留，顺延 09-28）**：`map` 要的是 `operator<` 不是 `operator>`
+  （本人 09-24 答错）；`unordered_map` 要 hash + **`operator==`**（本人漏了后者）——
+  **有了 hash 为什么还非要 `operator==`**？（两个不同 key 撞进同一个桶怎么办）
+- ❓ **待答（09-24 答「记不得了」，教练只给出处未给答案）**：`unordered_map::insert` 之后
+  迭代器是否失效？出处：cppreference `unordered_map::insert` 页「If after the operation...」段
+  （关键词 `rehashing` / `invalidated`）
 - ❓ 待答：`std::map<std::string, std::vector<Observer*>>` 遍历中调 `o->OnPrefChanged(key)`
   是虚函数 —— 若某个 Observer 在里面调了 `RemoveObserver` 会发生什么？
   （「迭代器稳定」真正咬人的形态，q-framework `pref_service.h:125` 实例）

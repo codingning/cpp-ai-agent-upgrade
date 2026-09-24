@@ -136,15 +136,26 @@
   在**浏览器双击下不成立**。**同一句话两种环境两种结果** —— 教练 09-22 给的是一个
   **没限定环境**的结论。今后凡涉及 `file://` 行为的断言，必须写明「在哪个宿主里」
 - 本人自行完成配置修改（教练只给定位「base 是 defineConfig 顶层属性，跟 plugins 平级」，未给代码）
-### Utility 和 Renderer 的区别 · 🔴 **连续第五次落地（09-19/20/21/22/23）**
-- ⚠️ **这条是教练的账，不是本人的**：一直没布置下去，因为出处未实读确认。
-  教练 09-23 承诺「本周内给出处」，**本周只剩 09-24 一天，逾期算教练欠本人**
-- 09-19 记录里空缺，09-20 块 2 题 7 仍空——连续两次落地
-- ⚠️ 教练 09-19 曾在此翻车（给了一篇不含答案的 mojo_and_services.md）
-- 已确认覆盖的一句（Electron tutorial/sandbox）：除主进程外多数进程都在沙箱内，
-  包括 renderer，也包括 utility（audio/GPU/network service 属此类）
-  —— 这句能说明 Utility 装什么，回答不了「区别是什么」
-- 状态：❌ 出处待教练实读 process_model_and_site_isolation.md / sandbox.md 后确认
+### Utility 和 Renderer 的区别 · ⚠️ **教练侧出处已结清（09-24），本人侧闭卷两问未答**
+- ⚠️ **这条一直是教练的账**：连续第五次落地（09-19/20/21/22/23），因出处未实读确认而没布置。
+  **✅ 09-24 09:3x 教练实抓出处，账结了**（commit `3e6893d`），**两处均可核**：
+  - **出处 1 · `chromium.org` 设计文档 `Multi-process Architecture` → 末节 `Additional Process Types`**
+    原文：`Chromium has split out a number of other components into separate processes as well,`
+    `sometimes in platform-specific ways. For example, it now has a separate GPU process,`
+    `network service, and storage service. Sandboxed utility processes can also be used for`
+    `small or risky tasks, as one way to satisfy the Rule of Two for security.`
+  - **出处 2 · Chromium 仓库 `docs/servicification.md` → `Hooking Up the Service Implementation`**
+    原文：`For out-of-process service launching, Content uses its "utility" process type.`
+    注册点 `//content/utility/services.cc`、`//chrome/utility/services.cc`；
+    拉起方式 `ServiceProcessHost::Launch`
+- **只给出处，不给答案。** 配的闭卷两问（09-24 布置，**本人未答，顺延 09-28**）：
+  1. Renderer 和 Utility 都在沙箱里、都碰不到文件系统 —— **区别到底在哪一层**？
+     （提示方向：这两种进程里跑的**代码是谁写的**）
+  2. network service 既然能进 Utility，**为什么不干脆放进 Renderer**？（线索是「Rule of Two」）
+- **它是什么 · Rule of 2**：Chromium 安全硬规矩 —— 「处理不可信输入」「用不安全语言（C/C++）写」
+  「不在沙箱里」三件事**最多只能同时满足两件**，三件全中就必须拆进程或换语言
+- ⚠️ 教练 09-19 曾在此翻车（给了一篇不含答案的 `mojo_and_services.md`），这次两段原文均已抄录可核
+- 状态：**教练侧 ✅ 结清** ｜ **本人侧 ⏳ 顺延 09-28 闭卷**
 ### ~~A4 sandbox → contextIsolation → preload 三层链~~ ✅ 09-20 结账
 - 本人自核 Electron 官方 `tutorial/sandbox` + `tutorial/context-isolation` + `tutorial/security` 后重答通过
 - 三层递进（不开这层攻击者能多拿到什么）：
@@ -267,19 +278,37 @@
   `reserve(10)` 预留后不扩容那版地址不变
 - 状态：⏳ **顺延 09-24 上午闭卷重答**
 
-### 🔴 三问未答（09-23 21:31 教练布置，本人未回）
+### 🔴 三问未答（09-23 21:31 教练布置）→ ⚠️ **09-24 上午已答，2 过 1 绕开**
 1. `map` 慢，什么场景**故意**选它？——「有序」不够，要落到 q-framework 里具体哪种数据
-   （本人 14:24 原话「真让我想，我一时想不起来，可能还需要翻代码查找，还不一定能找到」）
+   （本人 09-23 14:24 原话「真让我想，我一时想不起来，可能还需要翻代码查找，还不一定能找到」）
+   → 🔴 **09-24 两轮又都没给，第二次绕开。顺延 09-28，允许答「翻了没找到」，不允许不答**
 2. rehash 之后**迭代器**和**元素地址**是不是同一回事？失效的到底是什么东西？
+   → ✅ **09-24 答对且给机制**：本人原话「节点没搬，搬的是桶里指针、没搬的是节点」。
+   这解释了「元素地址不变」与「迭代器失效」为何同时成立不矛盾。**本轮质量最高的一条。**
+   ⚠️ 但本人自己指出：那个 `bucket_count 8→512` 探针是教练跑的，对他是**二手证据** →
+   **09-28 自己重跑一次 `week-03/key_probe.cpp` 才算结账**
 3. vector 扩容失效，标准为什么写「**可能**」不写「**一定**」？
-- 状态：⏳ **顺延 09-24 上午闭卷**
+   → ✅ **09-24 答对**，且追问的 `vector::insert` 也答对（「插入点之后全失效，触发扩容则全部失效」），
+   与 cppreference 原文 `Otherwise, only the iterators and references before the insertion point remain valid.` 一致
 
-### 🟡 `lower_bound` / `upper_bound`（09-23 教练已给定义，本人未复述）
-- **本人 14:24 原话**：「我根本不知道 map `lower_bound`/`upper_bound` 分别是什么意思，
+### 🟡 `lower_bound` / `upper_bound`（09-23 教练已给定义）→ ✅ **09-24 闭卷复述通过（第二轮）**
+- **本人 09-23 14:24 原话**：「我根本不知道 map `lower_bound`/`upper_bound` 分别是什么意思，
   也不清楚需要分成『遍历有序』和『动态范围查询』两件事」
-- ⚠️ **教练当日在此出错**：要求本人「自己把『有序』拆成两件事」，
+- ⚠️ **教练 09-23 在此出错**：要求本人「自己把『有序』拆成两件事」，
   但他根本不知道 `lower_bound` 是什么 —— **违反 09-20 硬规矩**（出题不许假设附带知识），已撤回
-- 按 09-20 规矩「记录里没标掌握的一律按没掌握处理」→ 状态 ⏳ **顺延 09-24 闭卷复述**
+- **09-24 第一轮答错**：「k 不存在时返回 end」。教练实跑驳回（MSVC，`map{1,3,5}`）：
+  ```
+  lower_bound(2): key=3     ← 2 不存在，但没返回 end
+  upper_bound(2): key=3
+  lower_bound(7): end       ← 这次才是 end
+  lower_bound(5): key=5
+  upper_bound(5): end
+  ```
+- **09-24 第二轮改对**（本人原话）：「lower_bound 没有 >=k 的 key 时返回 end；
+  upper_bound 没有 >k 的 key 时返回 end」→ ✅ **结账，记已掌握**
+- ⚠️ **配套那一问仍差一层**：「遍历有序 vs 动态范围查询」本人答「插入就把排序打乱了」**不严谨** ——
+  插到 `lower_bound` 算出的正确位置上 `vector` 照样有序。真代价是「后面元素要搬」，
+  O(?) 对 `map` 的 O(?) **未填** → ⏳ 顺延 09-28
 
 ### 🟡 「迭代器稳定」真正咬人的形态（09-23 遗留一问，未答）
 - `components/pref/pref_service.h:125` 的 `std::map<std::string, std::vector<Observer*>>`，
@@ -309,3 +338,78 @@
 ### 📌 元规则「先写预测」第七次未见书面执行（09-23）
 - 教练 17:01 明确要求「我认为 Electron 里会 / 不会白屏，因为 ___，先写预测再跑」
 - 仓库内与会话内**均未见本人写下的那句预测**
+
+---
+
+## 🆕 09-24 新挂 / 顺延（W3D4 · 半天执行）
+
+> 09-24 上午段 09:35-10:04 有产出（5 问两轮，过 3 欠 3）；**下午 17:00-17:50 零产出**，
+> 收工三件全未做。**原因本人未回话，教练不代填不编造。**
+> 明日 09-25 起中秋停训 3 天，下一个训练日 09-28（实际间隔 4 天）。
+
+### 🔴 C++ key 类型要求 —— 两处都错/漏（09-24 闭卷，教练实跑驳回）
+- **本人原话**：「map 要 operator> unordered_map 要 hash」
+- **错 1**：`map` 要的是 **`operator<`**（默认比较器 `std::less`），不是 `operator>`。
+  教练实跑：只给 `operator<` 的结构体进 `map`，MSVC 编译通过，`map size=1`
+- **漏 1**：`unordered_map` 是 **hash + `operator==`** 两件。教练实跑（只给 `KHash` 不给 `operator==`）：
+  ```
+  xutility(604): error C2676: 二进制"==": "const _Ty" 不定义该运算符
+          with [ _Ty=K ]
+  ```
+- **延伸未答**：有了 hash 为什么还非要 `operator==`？（想两个不同 key 撞进同一个桶怎么办）
+- 状态：⏳ 顺延 09-28
+
+### 🟡 `unordered_map::insert` 之后迭代器是否失效（09-24 答「记不得了」）
+- 教练**只给出处未给答案**：cppreference `unordered_map::insert` 页，
+  「If after the operation...」那段，关键词 `rehashing` / `invalidated`
+- 读完写一句结论。读完会发现它和 09-23 那个 rehash 探针是同一件事
+- 状态：⏳ 顺延 09-28
+
+### 🔴 前端断层第一课整段未开始（09-24 下午零产出）
+- **npm 工具链三项**（`package.json` / `npm run` / `npm init -y`）—— 本人自评「只知道是什么，
+  没跑过」，**09-24 仍是没跑过**。教练实查：`F:/code` 顶层
+  `find -maxdepth 1 -newermt "2026-09-24"` **零命中**，`npm init -y` 的新目录根本不存在
+- **`MessageItem` 组件 + props 两版** —— `props.text` 版 + 箭头函数解构版，
+  **这是本人自评「不会」的箭头函数 + 解构的第一次实战**。
+  教练实查：`vite-project/src/App.tsx` mtime 仍是 **09-23 16:57**，整个工程今日零改动
+- ⚠️ **排课口径变更**：隔 4 天后（09-28）这两项要按**零基础第一次讲**排，不能当复习排 ——
+  停训后掉的正是「只学过一次」的东西，而这两项连一次都没学过
+- 状态：⏳ 顺延 09-28 下午
+
+### 🔴 Chromium/Electron 三层链整链口述未做 → 提级判定作废
+- 09-23 已两问独立答对，但 L2 口径是「**能自己讲清整链**」（sandbox → contextIsolation →
+  contextBridge，每层「掉了会怎样」+「为什么开关独立但防护串联」）
+- 09-24 未口述 → **维持 L1+，L2 候选继续挂**
+- 状态：⏳ 顺延 09-28
+
+### 🔴 版本记录缺口 —— 跨日未清（09-24 复查，与 09-23 同）
+- `F:/code/vite_react/vite-project` **仍不是 git 仓库**（`git log` 仍报 `fatal: not a git repository`），
+  09-23 写的 `main.cjs`、`scripts/electron-smoke.cjs` **至今零版本记录**
+- `week-03/iter_probe.cpp`、`key_probe.cpp` 仍未 commit
+  （⚠️ 这两个是**教练写的探针**，commit message 要标明来源）
+- 三仓 09-24 全部零 commit
+
+### 🔴 「假期后第一件事」清单未写
+- 09-23 排课时定的假期收口动作（「只写回来第一个小时干什么，不要写成复习计划」），**落空**
+- 按红线这栏是本人产出，教练不代填。`daily/history/2026-09-24.md` 第五节留空挂账
+
+### 📌 元规则「先写预测」第八次未见书面执行（09-24，第 10 次要求）
+- `current.md` 09-24 版第 12-18 行明确要求，两段任务里都有「跑完看什么」的环节
+- 仓库内与会话内均未见那句「我认为 X 由 ___ 决定」
+
+### ⚠️ 教练 09-24 出错 1 次（本人未指出，教练 23:00 自查发现）
+- **21:39 打卡推送断言「今天两段窗口的产出是 0」—— 错。**
+  上午段有真实产出（09:46 / 10:01 两轮闭卷作答 + 教练两轮批改 + 当场判定 3 条已掌握）
+- **根因**：只查了**文件系统 mtime 与 git log**，**没查自己的会话记录**就下结论
+- **同类第 3 次**（09-22 把本人「回答场景题」误判为「本人的错误观点」；
+  memory 与本文件均已写明「批改/下结论前必须先读 `state.db` 原文」）
+- **规则加固**：**拿单一证据源当全部证据 = 又一次实验无分辨力。**
+  纯文字训练（闭卷问答、口述、批改）不产生文件改动，**会话本身就是唯一证据源**。
+  打卡检查必须同时查：①`state.db` 会话 ②三仓 git log ③文件 mtime，三者缺一不下结论
+- 改正后口径：**09-24 = 半天执行**（上午完成、下午零产出），不是「全天零产出」
+
+### 🏆 方法论进步一条（09-24，本人主动提出，教练接受）
+- 本人第一轮作答即点明：「**昨天我并没有做实验，是你自己做的实验**」
+- 按他 09-20 自立的规矩（没自己验证的一律算没掌握），那个 `bucket_count 8→512`
+  对他是**二手证据** → 教练当场接受，并把「自己重跑探针」挂进 09-28
+- **第二次主动区分「听来的」与「验证过的」**（首次 09-21 Q10 自标「ai说，未验证」）
