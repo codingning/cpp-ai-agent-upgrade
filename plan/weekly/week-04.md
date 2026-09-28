@@ -17,9 +17,14 @@
 
 | 日 | 上午 C++ 30min | 下午 Electron 45min | 末尾 15min |
 |---|---|---|---|
-| **09-28 一** | `string_view`（本周原排） | 🔴 **useState**（中秋顺延来的 W3D5）+ 组件/props 补齐 | q-framework 第一层缺口 |
-| **09-29 二** | `optional`（本周原排）+ 🔴 STL 算法/Lambda/词频题（中秋顺延来的 W3D5） | preload.js + contextBridge（本周原排） | q-framework 双后端全景 |
-| **09-30 三** | 🔴 **W3 周复盘 + 迭代器失效 5 场景小测**（中秋顺延） | 🔴 **useEffect 概念课**（中秋顺延来的 W3 周六下午） | q-framework 抽象的理由 |
+| **09-28 一** ✅ **全部完成，280min** | ✅ 09-24 欠账 5 条全闭 + ✅ `string_view` 三问三版闭环 | ✅ npm 工具链亲手跑 + ✅ 组件/props 两版 + ✅ `import`/`export` 三问（`useState` 顺延 09-29） | ✅ 三层链整链口述通过 **→ L2** + ✅ q-framework 第一格自己看出来 |
+| **09-29 二** | `optional`（本周原排）+ 🔴 STL 算法/Lambda/词频题（中秋顺延来的 W3D5）+ ⏳ Utility vs Renderer 两问（09-28 顺延） | ⏳ `useState`（09-28 唯一顺延）+ preload/contextBridge **改为安全审计三问**（原题已完成，见周二段） | q-framework 双后端全景 ｜ 🔴 **开工前先清三仓 commit** |
+| **09-30 三** | 🔴 **W3 周复盘 + 迭代器失效 5 场景小测**（中秋顺延） | 🔴 **useEffect 概念课**（中秋顺延来的 W3 周六下午） | q-framework 抽象的理由 ｜ 🔴 **「假期后第一件事」清单必须写**（09-24 已落空一回） |
+
+> **09-28 实际战果**（教练 23:00 依实跑证据核）：280min，**开训以来单日最高**（前高 205min），
+> 排的全做完、零顺延（`useState` 留 09-29 是顺序判据不是没做完），
+> 本人另**自主加做** `map` vs `unordered_map` 计时实验（教练只说「有余力就做」）。
+> **唯一欠账是产出不是知识**：三仓零 commit，`vite-project` 仍不是 git 仓库。
 
 ### 🔴 09-28 14:30 二次重算：顺延撤回（本人要求）
 
@@ -166,10 +171,18 @@ webview/webview2/    ← 微软 WebView2（Edge 内核），8 文件
 
 **Electron 45 分钟**：
 - 阅读 [preload script](https://www.electronjs.org/docs/latest/tutorial/tutorial-preload)
-- 在 side project 中添加 ~~preload.ts~~ **`preload.js`**
-  （**09-23 改**：实查 `package.json` 无 TypeScript、项目全 `.js`。
-  week-01 第 50 行排的 TS 从未落地，已在 `docs/frontend-prereq.md` 6.2 标 W1-W6 作废）
-- 用 contextBridge.exposeInMainWorld 暴露一个测试 API
+- ~~在 side project 中添加 `preload.js`，用 contextBridge.exposeInMainWorld 暴露一个测试 API~~
+  🔴 **09-28 23:00 教练实查后改题**：`F:\code\ai-desktop-assistant\preload.js` **W1D3 就已写完**，
+  现有 `electronAPI` 三个接口（`openFile` / `getCurrentData` / `helloName`），
+  原题对他已无分辨力。**按不缩水的规矩题目升级不删除**，改成对这 7 行做**安全审计**三问
+  （接他 09-28 刚升 L2 的三层链，也正好是他部门的活），详见 `daily/current.md`：
+  1. `helloName(nameString)` 收渲染进程传来的字符串，渲染进程被 XSS 后攻击者能做什么
+     （要他自己去 `main.js` 看 `ipcMain.handle('helloName', ...)` 的实现再答）
+  2. 若加一行 `nodeRequire: (m) => require(m)`，三层链的哪一层被废掉、为什么
+  3. 为什么暴露的是**函数**而不是 `ipcRenderer` 本身 —— 直接
+     `exposeInMainWorld('ipc', ipcRenderer)` 会怎样（官方安全文档明确禁止，要他找出理由）
+- **另新增顺延两条**（09-28 未做）：Utility vs Renderer 闭卷两问（出处 `docs/debt-map.md` 139-158 行）、
+  三仓 commit + push（`vite-project` 要先 `git init`）
 
 **记录 15 分钟**
 
