@@ -167,9 +167,19 @@
 - 🔴 **由此新立的纪律：编译器警告不许跳过**。`printf("%p", p)` 传的是 `std::string` 对象不是 `void*`，
   MSVC 给了 4 次 `C4477`，本人跳过一整轮才发现「地址变了」是巧合（变的是栈上位置）。
   改成 `printf("%p", (void*)p.data())` 才是真证据。
-- ❓ 待答：`std::map<std::string, std::vector<Observer*>>` 遍历中调 `o->OnPrefChanged(key)`
-  是虚函数 —— 若某个 Observer 在里面调了 `RemoveObserver` 会发生什么？
-  （「迭代器稳定」真正咬人的形态，q-framework `pref_service.h:125` 实例）
+- ✅ **09-29 结账**：`std::map<std::string, std::vector<Observer*>>` 遍历中调
+  `o->OnPrefChanged(key)` 是虚函数 —— 若某 Observer 在里面调 `RemoveObserver`：
+  **两层叠加 UB**。①**vector 层**：range-for 的 `end()` **只在进循环前求值一次**
+  （C++17 标准展开 `auto __b=begin(); auto __e=end();`，教练实跑 Probe 证明 begin/end 各只调 1 次），
+  erase 后缓存的 `__e` 比新 end **多一格** → 循环多读一格野内存。
+  ⚠️ 此处 **cap 未变（3→3）、无重新分配，「没有扩容照样失效」**，与「扩容全失效」不是一回事。
+  ②**map 层**：vector 空了会连 map 的键一起 `erase(it)`，删掉的正是循环里那个同名 `it`。
+- 🔴 **重入 ≠ 并发（本人 09-29 提出，教练实跑澄清）**：调用栈
+  `Notify → OnPrefChanged → Remove → vector::erase` **全在同一线程同一调用栈**，
+  是**重入（reentrancy）**。**加锁不解决，还会死锁**（同线程二次进非递归 `std::mutex`）。
+  数据竞争才用锁，那是另一个问题（`pref_service` 全文确实无任何锁，那个 bug 独立存在）。
+- 修法两种（教练给，**未自己实现**）：①遍历副本（不需检测，低频场景够用）
+  ②延迟删除打标记（Chromium `base/observer_list.h:305-319` 的做法，靠 RAII 登记活迭代器）
 - ⚠️ **MSVC 陷阱（09-23 教练实跑）**：`__cplusplus` 默认返回假值 `199711L`，
   必须加 `/Zc:__cplusplus` 才是真值（实测 `201402`）。据假值推出的结论一律作废重推
 ### copy-and-swap（09-22 结账）
@@ -200,7 +210,13 @@
   → `::operator delete(temp)` → `throw;` 原样重抛；销毁旧元素与改 `data_/cap_` 全部挪到 try 之后
   - Boom 探针实跑（第 3 次拷贝构造抛）：size/cap 4→4 未变、存活对象 4→4 无泄漏、
     异常后继续 push 成功 → 强异常保证成立
-- ❓ 待想：手动 try/catch 回滚 vs RAII 守卫（unique_ptr，零 catch），标准库为什么选后者
+- ✅ **09-29 结账（本人闭卷答对第 1 条，教练补第 2 条）**：手动 try/catch 回滚
+  vs RAII 守卫（unique_ptr，零 catch），标准库为什么选后者 ——
+  ①**出口覆盖**（本人答对）：函数有 3 个 return + 2 个 throw 点时 try/catch 要每处不漏，
+  RAII 靠析构，编译器保证每条路径都跑；
+  ②**catch 块自己也会抛**（教练补，本人未验证）：异常处理中再抛 → `std::terminate`；
+  RAII 守卫的析构按约定 noexcept，不存在这个问题。
+  ⚠️ 本人原答第 2 条写「代码更简洁」，**不算理由，已驳回**。
 ## 工具箱
 ### 关键字
 - explicit

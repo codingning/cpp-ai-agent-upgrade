@@ -18,7 +18,7 @@
 | 日 | 上午 C++ 30min | 下午 Electron 45min | 末尾 15min |
 |---|---|---|---|
 | **09-28 一** ✅ **全部完成，280min** | ✅ 09-24 欠账 5 条全闭 + ✅ `string_view` 三问三版闭环 | ✅ npm 工具链亲手跑 + ✅ 组件/props 两版 + ✅ `import`/`export` 三问（`useState` 顺延 09-29） | ✅ 三层链整链口述通过 **→ L2** + ✅ q-framework 第一格自己看出来 |
-| **09-29 二** | `optional`（本周原排）+ 🔴 STL 算法/Lambda/词频题（中秋顺延来的 W3D5）+ ⏳ Utility vs Renderer 两问（09-28 顺延） | ⏳ `useState`（09-28 唯一顺延）+ preload/contextBridge **改为安全审计三问**（原题已完成，见周二段） | q-framework 双后端全景 ｜ 🔴 **开工前先清三仓 commit** |
+| **09-29 二** | ✅ `optional` 三问（sizeof 公式本人独立推对）+ ✅ STL 算法/Lambda/词频题（四版迭代）+ ⚠️ Utility vs Renderer 两问（**第 2 问本人搜索所得，不计掌握，复测挂 10-08**）+ 🆕 **四条碎账一次扫完**（本人指令，知识图 ❓ 清零） | ⏳ `useState` + preload/contextBridge 安全审计三问 | q-framework 双后端全景 ｜ ✅ **三仓 commit 已清**（新建 `vite-electron-practice` 私有仓） |
 | **09-30 三** | 🔴 **W3 周复盘 + 迭代器失效 5 场景小测**（中秋顺延） | 🔴 **useEffect 概念课**（中秋顺延来的 W3 周六下午） | q-framework 抽象的理由 ｜ 🔴 **「假期后第一件事」清单必须写**（09-24 已落空一回） |
 
 > **09-28 实际战果**（教练 23:00 依实跑证据核）：280min，**开训以来单日最高**（前高 205min），
