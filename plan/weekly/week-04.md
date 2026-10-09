@@ -163,7 +163,7 @@ webview/webview2/    ← 微软 WebView2（Edge 内核），8 文件
 | 周一 09-28 | 补第一层缺口 | 查 `.gn` / `BUILD.gn`，答「为什么不用 CMake」 | 能说出与 `base/` 来源的关系 |
 | 周二 09-29 | 双后端全景 | 只读 `webview/webview.h`（70 行），画出接口全貌 | 说清 `Create()` 为什么 static、`Delegate` 干什么 |
 | 周三 09-30 | 抽象的理由 | 对比 `cef/cefwebview_impl.h` 与 `webview2/webview2_impl.h` | 答：抽象基类为什么要存在，直接调 CEF 不行吗 |
-| 周四 10-01 | **抽象的破绽** | `webview.h` 第 63-68 行那六个 `#if defined(ENABLE_CEF)` 函数 | 答：为什么抽不进纯虚基类（**压轴**） |
+| 周四 10-01 | **抽象的破绽** | `webview.h` 第 63-68 行那 ~~六个~~ **4 个** `#if defined(ENABLE_CEF)` 函数（🔴 教练 10-09 实查更正：`grep -n ENABLE_CEF webview/webview.h` 只命中第 63 行一处，块内为 `WebViewRunChildProcess` / `WebViewInit` / `WebViewMessageLoopWorkOnce` / `WebViewIsCefEnabled`，**全是自由函数不是成员函数**；「六个」系照记忆写，作废） | 答：为什么抽不进纯虚基类（**压轴**）。**实际执行日顺延 10-09**（10-08 本人未训练） |
 | 周五 10-02 | 三方对照 | CEF / WebView2 / Electron 三者进程模型 | 一张对照表，本人自画 |
 
 **名词表**（本人未标掌握的一律标注，09-20 硬规矩）：
