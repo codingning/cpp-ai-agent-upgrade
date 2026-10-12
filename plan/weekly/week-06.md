@@ -29,7 +29,15 @@
 
 | 日 | 上午 C++ 40min | 下午 Electron 50min | 记录 15min |
 |---|---|---|---|
-| **10-12 一** | `unique_ptr` 深入（三问）+ 清 4 条小欠账 | IPC 四种模式 + **亲手验 `ipcRenderer` 过 `contextBridge`** | 当日记录 + 两仓 commit |
+| **10-12 一** ✅ | `unique_ptr` 深入（三问）+ 清 4 条小欠账 → **三问全部结账（一轮返工）+ 欠账清 6 条** | IPC 四种模式 + **亲手验 `ipcRenderer` 过 `contextBridge`** → **亲手验完结账；`getNumber` 链四断点未通，顺延 10-13** | **149min，09-29 以来最高。`cpp-practice` 两 commit；`vite-project` 四处改动未 commit（新挂欠账 18）** |
+> 🔴 **10-13 开工第一件事是容量选择题（教练不替他砍）**：这一格现在挤了四件 ——
+> A `shared_ptr` 三问 40min / B `getNumber` 链打通 50min / C 大项 11 约 2h / D 大项 12 约 1.5h，
+> **合计 3-4h，远超 1.5h 保底**。方案 1（有 3h+）：四件全做，C→D 放上午长段；
+> 方案 2（只有 1.5h）：做 A+B，C、D 回 10-17 的 4h 深度档。**教练建议方案 2**，
+> 理由：C、D 是读码产出型任务，做半截比不做更糟；A、B 是链条型任务，断一天更难接。
+> 另：`shared_ptr` 教练实查 `docs/cpp-concept-map.md` **全文无此条** →
+> 按 09-28 铁律**先讲 control block / `use_count` / 循环引用三段定义，再让他跑实验**。
+
 | 10-13 二 | `shared_ptr`：control block 在哪 / 引用计数开销 / 循环引用 **+ 🔴 大项 11（`base/` 扫 5 个重复轮子）+ 大项 12（q-fw 第四格 Q6-Q7 + 第五格对照表）从 10-17 提前至此（他 10-12 16:2x 指令「11、12 放到明天」）** | side project 第 1 种 IPC：`send` + `on` | + W3 复盘块 2 填两问 |
 | 10-14 三 | `weak_ptr`：怎么破循环引用 / `lock()` 为什么返回 `shared_ptr` | IPC 请求-响应：`invoke` + `handle` | + W3 复盘块 2 填完 |
 | 10-15 四 | **`variant` / `std::visit` / 结构化绑定**（W5 顺延；**他完全没学过 → 先讲定义和答案再验**，09-28 铁律） | `webContents.send` 主动推送（Main → Renderer） | + W4/W5 复盘块 2 八问 |
