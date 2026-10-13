@@ -1009,6 +1009,7 @@
 
 | 用途 | 文件 |
 |---|---|
+| 🆕 `vite-project` 文件地图（10-13 建） | `docs/vite-project-map.md` |
 | 为什么调整方向 | `plan/STRATEGY-2026-09-07.md` |
 | 24 周总路线 | `plan/roadmap-24-weeks.md` |
 | Week 1-6 详细日计划 | `plan/weekly/week-01.md` 至 `week-06.md` |
