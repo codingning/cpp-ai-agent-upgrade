@@ -40,8 +40,8 @@
 
 | 10-13 二 | `shared_ptr`：control block 在哪 / 引用计数开销 / 循环引用 ｜ ~~大项 11 / 大项 12 从 10-17 提前至此~~ **→ ✅ 10-13 15:1x 本人指令撤回：「工作有安排，回归固定时间，额外时间我会主动说」→ 容量方案 2 生效，大项 11、12 退回 10-17 的 4h 深度档，一条未砍** | side project 第 1 种 IPC：`send` + `on`（`getNumber` 链四断点） | + W3 复盘块 2 填两问 |
 | 10-14 三 | `weak_ptr`：怎么破循环引用 / `lock()` 为什么返回 `shared_ptr` ｜ **开工先让他亲手跑 `docs/vite-project-map.md` 末尾那三个验证 20min** | ~~IPC 请求-响应：`invoke` + `handle`~~ **→ 10-13 18:0x 改为：建 `docs/electron-concept-map.md` + 已有散装结论归位**（他 17:52 提「Electron 侧每次训练都很突兀」，实查证实 Electron 侧零概念图；`invoke`/`handle` 推 10-15 合讲，**不是砍**） | + W3 复盘块 2 填完 |
-| 10-15 四 | **`variant` / `std::visit` / 结构化绑定**（W5 顺延；**他完全没学过 → 先讲定义和答案再验**，09-28 铁律） | **`invoke`/`handle` + `webContents.send` 合讲**（10-14 顺延过来；本来就是同一层的三种形状，分三天讲正是「突兀」的来源） | + W4/W5 复盘块 2 八问 |
-| 10-16 五 | 🔴 **21 天复测**（含 W6 周一原排的 `StringBuffer` 闭卷 20min，**合流不是砍**） | 复测补漏 + Electron `electron-store` 持久化（W5 顺延） | + W4/W5 复盘块 4 |
+| 10-15 四 | **`variant` / `std::visit` / 结构化绑定**（W5 顺延；**他完全没学过 → 先讲定义和答案再验**，09-28 铁律；教练 10-14 23:0x 已实跑取数：`sizeof(variant<int,double,string>)=40`、默认 `index()=0`、`get` 抛 `bad_variant_access` vs `get_if` 返 nullptr、`auto&` 绑定改得动 / `auto` 改不动） | **`invoke`/`handle` + `webContents.send` 合讲（三形状一次讲完，不再往后推）** + 🔴 **建 `docs/electron-concept-map.md`（欠账 20，10-14 下午整格零产出顺延）** | + 闭卷五问（欠账 21）+ 欠账 19 + W3 复盘块 2 填 3 问 |
+| 10-16 五 | 🔴 **21 天复测**（含 W6 周一原排的 `StringBuffer` 闭卷 20min，**合流不是砍**） | 复测补漏 + Electron `electron-store` 持久化（W5 顺延） | + **W4/W5 复盘块 2 八问（10-15 顺延）** + W4/W5 复盘块 4 |
 | 10-17 六 | **4h 深度**：①简版 `shared_ptr` 实现（含引用计数）②**`base/` 顶层 108 个 `.h` 扫 5 个重复轮子（10-13 退回至此）**③**q-fw 第四格 Q6-Q7 + 第五格三方对照表（10-13 退回至此）**④**LRU 闭卷从 W7 回收至此** → ⚠️ 四件挤在 4h 里，10-16 晚必须重算容量，装不下的写明去向不许默切 | | |
 | 10-18 日 | **2h 复盘**：W6 周复盘 + 🔴 **重写 W4/W5/W6 门禁清单（教练的账）** + 阶段一验收自评 | | |
 
