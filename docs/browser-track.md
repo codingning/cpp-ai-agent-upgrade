@@ -372,10 +372,67 @@ chrome/common/360/pref_names_360.cc/.h                    偏好项
 
 ---
 
+## 五点五、🔴 23:00 补查：`content/` 不是一个提交的事，是 7 个提交 22 个文件
+
+（本节接第零点五节的 S 档，因在第五节之后补写，编号排在此处）
+
+教练 19:0x 只看了 `8beac32` 一个提交。23:00 全分支按目录重查（`E:/code/browser/src`，可核）：
+
+```bash
+git log --all --author=ningxinyang --oneline -- content/            # → 7 个提交
+git log --all --author=ningxinyang --name-only --pretty=format: \
+  | grep '^content/' | sort -u | wc -l                              # → 22 个不同文件
+```
+
+22 个文件全名（上面 S 档那 16 个 **之外**还多出 6 个）：
+
+```
+content/browser/download/download_manager_impl.cc      ← 新增
+content/browser/plugin_list.cc                         ← 新增
+content/browser/plugin_process_host.h                  ← 新增
+content/browser/plugin_service_impl.cc / .h            ← 新增
+content/browser/render_process_host_impl.h             ← 新增（S 档只记了 .cc）
+```
+
+**对排课的意义**：原判断「`content/` 是孤例，只够讲一课」**不成立**。
+`plugin_service_impl` 那组是**插件进程**（`PluginProcessHost`），
+`download_manager_impl` 是**下载线程模型**，和 S 档的**进程隔离决策**是
+`content/` 层三个不同子系统 —— **浏览器线第二层的教材量够撑整周，不用借官方文档的陌生例子。**
+
+### 五层各自的「不同文件数」（23:00 实跑，10-16 开场课用这组数）
+
+```bash
+for d in chrome components extensions net content; do
+  git log --all --author=ningxinyang --name-only --pretty=format: \
+    | grep "^$d/" | sort -u | wc -l
+done
+```
+
+| 层 | 他改过的不同文件数 | 主要落点 |
+|---|---|---|
+| `chrome/` | **365** | `chrome/app/theme` 100 ／ `chrome/browser/360` 72 ／ `chrome/browser/ui` 65 ／ `chrome/installer/tdsetup` 27 ／ `chrome/installer/mini_installer` 19 ／ `chrome/browser/360se` 13 |
+| `components/` | **30** | `download/`（含 `360/p2sp_download_wrapper.cc`）／`omnibox/`／`crash/core/app/crashpad.cc`／`360se/update/`／`bookmarks/`／`content_settings/` |
+| `content/` | **22** | 见上节 |
+| `extensions/` | **13** | `common/constants.*`／`browser/extension_host.cc`／**`common/mojom/external_api.mojom`**（提交 `d70cc09c`「支持登录」） |
+| `net/` | **1** | `net/base/url_util.cc` |
+
+**两条可直接出题的反差**：
+- **365 : 22 = 16 倍** —— 他的工作量主要在产品层，但**技术含量最高的在 `content/`**。
+  「文件数的分布」和「技术含量的分布」不是一回事 → 出成 B2。
+- **他已经改过 `.mojom`**（`extensions/common/mojom/external_api.mojom`），
+  而此前判断是「他只看过 `.mojom`」—— **改过和看过不是一回事**，W10 Mojo 那课的起点要重估。
+
+---
+
 ## 六、排期（10-16 起，与 q-framework 轨并行）
 
 > 下午 17:00-17:50 整格 50min。**两条线不平分，按「哪条更缺」动态给**。
 > 本周先走完 q-fw 第二层收口（10-15 已完成），**浏览器线 10-16 起开场**。
+>
+> 🔴 **10-15 23:00 冲突消解备案**：`plan/weekly/week-06.md` 第 44 行原给 10-16 下午排的是
+> 「复测补漏 + q-fw 第三层开场」，与本表此行**撞格**。已定：**10-16 下午归浏览器线**，
+> **q-fw 第三层开场顺延 10-17 的 4h 深度档**（那天本就排 q-fw 第四格，同线并入，不是叠新东西）。
+> `week-06.md` 已同步改，原文划掉保留。
 
 | 日期 | 下午那格 | 对应层 | 备注 |
 |---|---|---|---|

@@ -1,5 +1,30 @@
 # q-framework 训练轨（面试深挖链驱动）
 
+> ## 🔴 2026-10-15 23:00 数据更正：本人提交数 55 → 175（教练账）
+>
+> 本文件此前多处依据「本人 55 个提交」。23:00 实跑（`E:/code/q-framework`，可核）：
+>
+> ```bash
+> git rev-parse --abbrev-ref HEAD                      # → qfa_unzip
+> git log --author=ningxinyang --oneline | wc -l        # → 56   （只当前分支）
+> git log --all --author=ningxinyang --oneline | wc -l  # → 175  （全分支）
+> ```
+>
+> **55 是「当前 checkout 分支」的子集，不是他的全部工作量。**
+> 同一天同一根因在浏览器仓也犯了一次（28 → 159），「拿单一证据源当全部证据」**第 4 次**。
+>
+> **目录分布（全分支，`--name-only` 去重后按目录计数前几名）**：
+> `app/appmain` 261 ／ `installer/setup` 133 ／ `app/appmain/skin/compress` 95 ／
+> `service` 83 ／ `components/oem_sdk` 41 ／ `shell_extension` 40 ／
+> `installer/setup/ui` 32 ／ `components/payment` 29 ／ `components/setdef` 20 ／ `components/login` 20
+>
+> **新发现一条（进 10-16 排课）**：`webview/` 目录他碰过 **2 个文件，但都是文档** ——
+> `webview/detailed.md`、`webview/readme.md`（提交 `13c164f6` / `18f9894b`「添加模块功能文档和详细文档」）。
+> **一行代码没改，但那两份模块文档是他写的。**
+> → 面试讲法「我没改过那层代码，但我给它写过模块文档」比「我不熟」强一档。
+>
+> **本文件下方所有依赖 55 的结论须重核，排 10-18 周复盘**（原文一律保留不删）。
+
 > # 🔴 2026-10-15 升格：本轨由「对照轨」变为**下午时段唯一主线**
 >
 > 本人 10-15 指令三条：①Electron/前端「完全不碰了，因为我没有相关经验」；
