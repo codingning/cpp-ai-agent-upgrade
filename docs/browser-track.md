@@ -16,8 +16,19 @@
 - **仓库**：`E:\code\browser`（gclient 检出），源码在 `E:\code\browser\src`
 - **remote**：`ssh://<user>@brow.src.corp.qihoo.net:29418/360browser.git`
 - **当前分支 HEAD**：`84dafdec8dcd2 [se16][closetab] intercept close tab and pop 3`
-- **本人提交数（`git log --author="ningxinyang"`）**：**28 个**，含 3 个 merge、2 个 Revert
-  → **真实功能提交 23 个**，时间跨度 **2025-04-07 ~ 2025-11-10**
+- 🔴 **提交数已更正（2026-10-15 19:0x 重查，教练前一个数字是错的）**：
+
+  | 口径 | 数 |
+  |---|---|
+  | `git log --author=ningxinyang`（**仅当前 checkout 分支**） | 28 ← 教练 17:47 误当成全部工作量写进本文件 |
+  | `git log --all --author=ningxinyang`（**全分支**） | **159** |
+  | Codex 从 Gerrit 导出（跨仓库，含 360Game/360pic 等） | 469 条，其中 `360browser` **147** |
+
+  **根因记教练账**：连 `git branch -a` 都没跑就下结论 ——
+  「拿单一证据源当全部证据」**第 3 次**（09-24、10-15 Q3、10-15 本条）。
+  下文一节「23 个功能提交」的分档是**当前分支子集**的分档，结论本身仍有效，
+  但**不是他的全部工作量**，W7 排课前必须按 159 全分支重做一次分档。
+- 时间跨度（当前分支口径）**2025-04-07 ~ 2025-11-10**
 - ⚠️ **内网 Gerrit 页 `brow.src.corp.qihoo.net/q/owner:...` 教练访问不了**
   （web 工具拦私有网段，curl 返回 `HTTP=401`）。**本文件全部数据来自本机 git 仓库实查**，
   比 Gerrit 页更全（含未上 Gerrit 的本地提交）。
@@ -58,6 +69,66 @@ net/base/url_util.cc
 → **`chrome/` / `components/` / `extensions/` / `net/` 四层都动过。**
 这正是他的典型形态（memory 在案）：**知识已在脑子里，缺的是名字和索引。**
 **所以浏览器线第二层不是「从零教」，是「给他已经干过的事装上名字」。**
+
+---
+
+## 零点五、🔴 S 档：`8beac32` —— 他改过 `content/` 层的进程隔离决策点
+
+**教练 17:47 建本文件时完全漏掉这个提交**（因为只查了当前分支）。
+19:0x 全分支重查 + 实读 diff 后确认：**这是全部提交里最值钱的一个，单独立 S 档。**
+
+实查（`git show --stat 8beac32`，教练本机跑，可核）：
+`8beac32766ee0  ningxinyang  2025-11-19  "fix bug"` —— **19 文件 242+/37-**，其中 `content/` 下 16 个文件：
+
+```
+content/browser/site_info.cc/.h
+content/browser/site_instance_impl.cc/.h
+content/browser/child_process_security_policy_impl.cc/.h        (+63/-… 本次最大改动)
+content/browser/renderer_host/render_process_host_impl.cc/.h
+content/browser/renderer_host/render_frame_host_impl.cc
+content/browser/renderer_host/render_frame_host_manager.cc
+content/browser/renderer_host/navigation_request.cc
+content/browser/renderer_host/navigator.cc
+content/browser/dom_storage/dom_storage_context_wrapper.cc
+content/browser/file_system/file_system_manager_impl.cc
+content/public/browser/child_process_security_policy.h
+content/public/browser/content_browser_client.cc/.h
++ chrome/browser/chrome_content_browser_client.cc/.h
+```
+
+改法（diff 原文）：给两个决策函数加了一个 `parent_host` 参数，用 `#if defined(FOR_360SE)` 包着：
+
+```cpp
+// content/browser/site_info.h
+bool ShouldLockProcessToSite(const IsolationContext& isolation_context
+#if defined(FOR_360SE)
+    , std::string parent_host = ""
+#endif
+) const;
+
+// content/browser/child_process_security_policy_impl.h
+CanCommitStatus CanCommitOriginAndUrl(..., const UrlInfo& url_info
+#if defined(FOR_360SE)
+    , std::string parent_host = ""
+#endif
+);
+```
+
+**为什么是 S 档**：`ShouldLockProcessToSite` 决定「这个 site 要不要把 renderer 进程锁死」，
+`CanCommitOriginAndUrl` 决定「这个 renderer 能不能提交这个页面」——
+**这两个函数就是 Chromium 进程模型与沙箱权限体系的决策点本身**，不是业务层、不是 UI 层。
+他动的是 Site Isolation 的判据。**全场面试最硬的一张牌，而他自己不知道这是什么。**
+
+⚠️ **但他上午亲口答「`chrome/` 和 `content/` 的分界，我答不上来」** ——
+手已经改到 `content/browser/renderer_host/` 里，却说不出这一层是什么。
+**所以浏览器线必须从「给已经干过的事装上名字」起步，不是从零教。**
+
+**挂账（W7 浏览器线第一课，教练出题用）**：`SiteInstance` / `SiteInfo` /
+`RenderProcessHost` / `RenderFrameHostManager` / `ChildProcessSecurityPolicy`
+五个类各是什么、Site Isolation 怎么决定页面放哪个进程、`FOR_360SE` 这个宏为什么必须包着改动。
+
+⚠️ 另：`a6d8f64`/`f5d15f8`/`4d81f7c` 三条 Revert 也碰同一批文件，
+`8bc3df2d`（2 文件）是同一主题的后续小改 —— 这组提交要**合起来当一个话题讲**，不是五个话题。
 
 ---
 
