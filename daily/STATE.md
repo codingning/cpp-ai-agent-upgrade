@@ -3,15 +3,17 @@
 这是新会话和新环境恢复训练时的首要入口。任何代理开始工作前依次读取：
 
 1. `README.md`
-2. `plan/STRATEGY-2026-09-07.md`（战略说明，理解方向）
-3. `plan/roadmap-24-weeks.md`（总路线）
-4. `plan/weekly/week-01.md`（当周详细计划）
-5. `plan/baseline.md`（能力基线）
-6. `plan/learning-loop.md`（学习方法论）
-7. `plan/competency-matrix.md`（能力矩阵）
-8. `daily/STATE.md`（本文件）
-9. `daily/current.md`（当日任务）
-10. 最近 3 份 `daily/history/*.md`
+2. 🔴 **`plan/STRATEGY-2026-10-15.md`（2026-10-15 方向变更，Electron 整条移出 → Chromium 内核/C++ 基础设施。先读这份）**
+3. `plan/STRATEGY-2026-09-07.md`（09-07 原战略，**方向部分已被上一条替代**，保留备查）
+4. `plan/roadmap-24-weeks.md`（总路线，已按 10-15 改写）
+5. `plan/weekly/week-06.md`（当周详细计划）
+6. `plan/baseline.md`（能力基线）
+7. `plan/learning-loop.md`（学习方法论）
+8. `plan/competency-matrix.md`（能力矩阵）
+9. `docs/q-framework-track.md`（🔴 10-15 升格为下午时段唯一主线）
+10. `daily/STATE.md`（本文件）
+11. `daily/current.md`（当日任务）
+12. 最近 3 份 `daily/history/*.md`
 
 ## 学习时段（工作日固定）
 
@@ -21,6 +23,27 @@
 - **前提**：部门 AI 探索任务有等待 AI 输出的空档，学习时段是结构性摸鱼窗口（不是压榨下班时间），这是 24 周计划可持续的核心假设——如果这个前提变化（换任务/被调岗），整个计划要重排
 
 ## 当前状态
+
+### 🔴🔴 2026-10-15 10:0x 方向变更（本人指令，最高优先级，覆盖以下所有 Electron 相关状态）
+
+> **本人原话三条**：①「先移除 electron 项目，下午改成专攻 q-framework 项目深挖 + chromium 内核知识」
+> ②「完全不碰了。因为我没有相关经验」 ③「投的岗位方向也得改成偏 Chromium 内核/C++基础设施」
+> ④「因为觉得 C++/Chromium 内核更贴你现在工作、更值钱，前端会越来越不值钱」
+>
+> **生效内容**：
+> - **下午 17:00-17:50 整格 50min = q-framework 深挖 + Chromium 内核**（原 Electron 主线 + 15min q-fw 对照）
+> - **上午 10:30-11:10 C++ 40min 不变**
+> - **目标方向**：~~Electron/Chromium + AI 集成，28-32K~~ → **Chromium 内核 / C++ 基础设施，28-32K**
+> - **简历主项目**：~~AI 桌面助手 side project~~ → **q-framework（E:\code\q-framework）**
+> - `vite-project` / `frontend-prereq.md` / `electron-concept-map` 全部 📦 归档作废
+> - 欠账 17 / 20 / 21-Q5 🚫 作废；Chromium 本体类欠账（Utility vs Renderer）✅ 升优先
+>
+> **已改文件（10-15 当场改完）**：`plan/STRATEGY-2026-10-15.md`（新建）、
+> `plan/roadmap-24-weeks.md`、`plan/weekly/week-07-to-24-outline.md`、`plan/weekly/week-06.md`、
+> `docs/q-framework-track.md`、`docs/debt-map.md`、本文件。
+> **W13-18（原 AI 集成六周）待本人在 A/B/C 三案中选，未选前按选项 B 预排执行。**
+
+---
 
 - **当前日期：2026-10-14（周三）W6D3 已结账**（`date` 实算 `2026-10-14 23:00 星期三`）。
   周次按硬公式：`(10-14 − 09-07).days = 37` → `37//7+1 = W6`、`37%7+1 = D3`。

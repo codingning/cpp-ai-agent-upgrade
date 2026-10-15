@@ -40,10 +40,31 @@
 
 | 10-13 二 | `shared_ptr`：control block 在哪 / 引用计数开销 / 循环引用 ｜ ~~大项 11 / 大项 12 从 10-17 提前至此~~ **→ ✅ 10-13 15:1x 本人指令撤回：「工作有安排，回归固定时间，额外时间我会主动说」→ 容量方案 2 生效，大项 11、12 退回 10-17 的 4h 深度档，一条未砍** | side project 第 1 种 IPC：`send` + `on`（`getNumber` 链四断点） | + W3 复盘块 2 填两问 |
 | 10-14 三 | `weak_ptr`：怎么破循环引用 / `lock()` 为什么返回 `shared_ptr` ｜ **开工先让他亲手跑 `docs/vite-project-map.md` 末尾那三个验证 20min** | ~~IPC 请求-响应：`invoke` + `handle`~~ **→ 10-13 18:0x 改为：建 `docs/electron-concept-map.md` + 已有散装结论归位**（他 17:52 提「Electron 侧每次训练都很突兀」，实查证实 Electron 侧零概念图；`invoke`/`handle` 推 10-15 合讲，**不是砍**） | + W3 复盘块 2 填完 |
-| 10-15 四 | **`variant` / `std::visit` / 结构化绑定**（W5 顺延；**他完全没学过 → 先讲定义和答案再验**，09-28 铁律；教练 10-14 23:0x 已实跑取数：`sizeof(variant<int,double,string>)=40`、默认 `index()=0`、`get` 抛 `bad_variant_access` vs `get_if` 返 nullptr、`auto&` 绑定改得动 / `auto` 改不动） | **`invoke`/`handle` + `webContents.send` 合讲（三形状一次讲完，不再往后推）** + 🔴 **建 `docs/electron-concept-map.md`（欠账 20，10-14 下午整格零产出顺延）** | + 闭卷五问（欠账 21）+ 欠账 19 + W3 复盘块 2 填 3 问 |
-| 10-16 五 | 🔴 **21 天复测**（含 W6 周一原排的 `StringBuffer` 闭卷 20min，**合流不是砍**） | 复测补漏 + Electron `electron-store` 持久化（W5 顺延） | + **W4/W5 复盘块 2 八问（10-15 顺延）** + W4/W5 复盘块 4 |
-| 10-17 六 | **4h 深度**：①简版 `shared_ptr` 实现（含引用计数）②**`base/` 顶层 108 个 `.h` 扫 5 个重复轮子（10-13 退回至此）**③**q-fw 第四格 Q6-Q7 + 第五格三方对照表（10-13 退回至此）**④**LRU 闭卷从 W7 回收至此** → ⚠️ 四件挤在 4h 里，10-16 晚必须重算容量，装不下的写明去向不许默切 | | |
-| 10-18 日 | **2h 复盘**：W6 周复盘 + 🔴 **重写 W4/W5/W6 门禁清单（教练的账）** + 阶段一验收自评 | | |
+| 10-15 四 | **`variant` / `std::visit` / 结构化绑定**（W5 顺延；**他完全没学过 → 先讲定义和答案再验**，09-28 铁律；教练 10-14 23:0x 已实跑取数：`sizeof(variant<int,double,string>)=40`、默认 `index()=0`、`get` 抛 `bad_variant_access` vs `get_if` 返 nullptr、`auto&` 绑定改得动 / `auto` 改不动） | 🔴 **10-15 10:0x 方向变更，本格整条换人**：~~`invoke`/`handle` + `webContents.send` 合讲~~ 🚫作废 ／ ~~建 `docs/electron-concept-map.md`（欠账 20）~~ 🚫作废 → **改为 q-framework 第二层收口：`webview.h` 第 63 行那组 `#if defined(ENABLE_CEF)` 四个自由函数，为什么抽不进纯虚基类（第二层压轴 Q4）** | + 闭卷五问（欠账 21，**Q5 那一问作废**，见下）+ 欠账 19 + W3 复盘块 2 填 3 问 |
+| 10-16 五 | 🔴 **21 天复测**（含 W6 周一原排的 `StringBuffer` 闭卷 20min，**合流不是砍**） | ~~复测补漏 + Electron `electron-store` 持久化（W5 顺延）~~ → **复测补漏 + q-fw 第三层开场：CEF browser/renderer 两进程各自职责、谁先起、谁创建谁**（`electron-store` 🚫作废） | + **W4/W5 复盘块 2 八问（10-15 顺延）** + W4/W5 复盘块 4 |
+| 10-17 六 | **4h 深度**：①简版 `shared_ptr` 实现（含引用计数）②**`base/` 顶层 108 个 `.h` 扫 5 个重复轮子（10-13 退回至此）**③**q-fw 第四格 Q6-Q7（10-13 退回至此；~~第五格三方对照表~~ → **改两方对照 CEF/WebView2**）**④**LRU 闭卷从 W7 回收至此** → ⚠️ 四件挤在 4h 里，10-16 晚必须重算容量，装不下的写明去向不许默切 | | |
+| 10-18 日 | **2h 复盘**：W6 周复盘 + 🔴 **重写 W4/W5/W6 门禁清单（教练的账，按 10-15 新方向重写）** + 阶段一验收自评（**Electron 那条门禁按 `roadmap` 新替代项评**） | | |
+
+### 🔴 10-15 方向变更：本周受影响条目逐条处置
+
+> 本人 10-15 10:0x 三条指令，详见 `plan/STRATEGY-2026-10-15.md`。
+> **Electron / 前端整条移出，下午时段 = q-framework 深挖 + Chromium 内核。**
+
+| 原条目 | 处置 | 说明 |
+|---|---|---|
+| 欠账 17 `getNumber` 链四断点 | 🚫 **作废** | 四个断点的**诊断方法论**已沉淀进 `docs/debt-map.md`（「显示不出来从来不是一个原因」），这是跨技术栈的，留着。要打通的那条 Electron 链不再练 |
+| 欠账 20 `docs/electron-concept-map.md` | 🚫 **作废** | 它是为「继续练 Electron」服务的。方向停了，图不建 |
+| 欠账 21 闭卷五问的 **Q5** | 🚫 **作废** | Q5 问的是 `main.cjs`/`preload.js` 由谁读、`src/App.tsx` 必须经过谁 —— 纯 Vite/Electron 构建链。**Q1-Q4（`weak_ptr` 四问）照常答，不作废** |
+| `invoke`/`handle` + `webContents.send` | 🚫 **作废** | 原已推一次，现整条移出 |
+| Electron `electron-store` 持久化（W5 顺延） | 🚫 **作废** | — |
+| q-fw 第五格「三方对照表」 | ⚠️ **降为两方** | CEF / WebView2 对照照做，Electron 那一列删掉 |
+| `vite-project` 仓库 | 📦 **归档** | 不删不动，`git` 保持现状。不再排期、不再查 commit、不再催 |
+| 前端断层表 `docs/frontend-prereq.md` | 📦 **归档** | 剩余 2 项（展开运算符 `...`、`async/await`）**不再排课** |
+
+**空出来的容量去哪**：下午整格 50min 从「Electron 主线 + 15min q-fw 对照」变成
+**q-fw / Chromium 独占 50min**，深挖链推进速度约为原来的 3 倍。
+原排在 W11-W12 的第四层（崩溃收集、沙箱）提前，且**由加分项升为必答**。
+
 
 ### 装不下的，写明去向（不是砍）
 
@@ -175,10 +196,11 @@
 ## 本周门禁（同时是阶段一门禁）
 
 - [ ] C++17 RAII/STL/智能指针闭卷小测全部达标（各≤20 分钟完成）
-- [ ] Electron side project 有：Chat UI（React）+ IPC 打通 + 持久化 + 4 种主进程 API（多窗口/菜单/托盘/preload）
+- [ ] ~~Electron side project 有：Chat UI（React）+ IPC 打通 + 持久化 + 4 种主进程 API（多窗口/菜单/托盘/preload）~~
+      🚫 **2026-10-15 方向变更作废** → 替代项：**q-framework 深挖链第二层四问闭卷可答 + CEF/WebView2 两方对照表**
 - [ ] Chromium 多进程架构能口述 5 分钟
-- [ ] **第 1 篇技术博客公开发布**（链接可分享）
-- [ ] 简历 v0（应急版）已完成
+- [ ] ~~**第 1 篇技术博客公开发布**（链接可分享）~~ 🚫 09-29 移出训练计划
+- [ ] ~~简历 v0（应急版）已完成~~ 🚫 本人 10-12 指令「简历不用提」，移出排程
 - [ ] 6 周日记 + 6 份周复盘 + 1 份阶段总复盘
 
 ## 卡壳降级
@@ -189,8 +211,14 @@
 
 ## 阶段二预告
 
-Week 7-12（Electron 深化 + Side project MVP）：
-- Electron 主/渲染/IPC/原生模块深度
-- Side project：接入 llama.cpp 真实 LLM 对话
-- C++ 并发（thread、mutex、condition_variable、线程池）
-- 累计博客 2 篇
+> 🔴 **2026-10-15 改写**（原文作废，见下方划线）
+
+Week 7-12（**C++ 并发 + q-framework/Chromium 深挖**）：
+- C++ 并发：`thread` / `mutex` / `condition_variable` / 线程池 / `atomic` 与内存序
+- q-framework 深挖链**第三层 + 第四层**：CEF 双进程职责、`HandleAppCmd` 全链路、
+  `ipc/` 手写传输层、异步回调的线程归属、`crashpad`/`breakpad` 两套并存、沙箱对照
+- 产出：`ThreadSafeQueue` + 线程池 + 至少一个真实崩溃 dump 的定位记录 + q-fw 吃透笔记定稿
+
+~~- Electron 主/渲染/IPC/原生模块深度~~ 🚫作废
+~~- Side project：接入 llama.cpp 真实 LLM 对话~~ 🚫作废（llama.cpp 视 W13-18 A/B/C 决定）
+~~- 累计博客 2 篇~~ 🚫 09-29 移出
