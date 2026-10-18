@@ -33,10 +33,31 @@
 **下午 q-fw**：第三层①——CEF 的 browser 进程和 renderer 进程，各自职责、谁先起、谁创建谁。
 对照锚点：`webview/cef/browser/` 与 `webview/cef/render/` 的成对 handler（09-22 实查，38 个文件）
 **周六 4h**：`base/` 顶层 108 个 `.h` 扫 5 个「重复造的轮子」收尾（这条从 W6 挂下来）+ 一个多线程小程序
+
+#### 🔴 2026-10-18 补入 · W7 浏览器线（D 组）四项日排法
+
+> **为什么补**：本文件 10-15 只在第 17-25 行写了「浏览器线并行，详见 `docs/browser-track.md` 第六节」，
+> **没有落到周计划文件的日排里** → 教练账，10-18 结清（`daily/current.md` 第三节原排）。
+> **两条线怎么共存一格**：下午 50min 不切两半。**周一/周三/周五给浏览器线，周二/周四给 q-fw 第三层。**
+> 周六 4h 档里 q-fw 另有独立格，所以 q-fw 不吃亏。
+
+| # | 内容 | 排到 | 时长 | 解锁/前提 |
+|---|---|---|---|---|
+| ① | **S 档第一课**：`SiteInstance` / `SiteInfo` / `RenderProcessHost` / `RenderFrameHostManager` / `ChildProcessSecurityPolicy` 五类各是什么 + Site Isolation 决策链 | **W7 周一下午（首项，不许后移）** | 40min | **这是简历行「参与 content/ 进程隔离决策链路排障」的解锁条件**（本人 10-17 主动指令，commit `745aebd`）。闭卷过关前不许写进简历 |
+| ② | 他的功能落在哪层 —— 用他自己的提交当教材（`04fd0d1` 网页打不开 9 文件 / `8beac32` content 片 22 文件） | W7 周三下午 | 50min | 需 ① 的五类名字先立住 |
+| ③ | omnibox 两处分层：`components/omnibox/browser/` 与 `chrome/browser/ui/views/omnibox/` 同一需求为何改两处（教材 `578c743`，20 文件） | W7 周五下午 | 50min | 需 B1-B4 五层分界（10-17 已过） |
+| ④ | 360 自有代码与上游并存 —— `content/` 下 20 处违例 include 就是教材 | **W8 周一下午**（W7 装不下，写明去向不是砍） | 50min | 需 ② 先落地 |
+
+**W7 浏览器线门禁（可验证形式）**：
+- [ ] 五类闭卷各答一句「它是什么 + 它决定什么」，**不许复述教练措辞，要指到自己改过的文件**
+- [ ] Site Isolation 决策链能说出「谁问谁、谁拍板建新进程」
+- [ ] ①过关后方可解锁那条简历行；不过关则简历行继续冻结
+
 **门禁**：
 - [ ] `join`/`detach` 的差别能用自己跑的实验说明（不是背定义）
 - [ ] 能画出 CEF 的进程树并说清每个进程里跑的是什么
 - [ ] 5 个重复轮子清单落到 `docs/q-framework-map.md`
+- [ ] 🆕 **W6 带病进来的 5 条清完**：W6-3（析构四类位置）／W6-4（`shared_ptr` 收尾两项）／W6-5（`explicit` 换实例）／W6-7（CEF/WebView2 两方对照表）／W6-8（Chromium 四进程口述 5min）
 
 ### Week 08：`mutex` + `HandleAppCmd` 全链路
 
