@@ -146,6 +146,107 @@ CanCommitStatus CanCommitOriginAndUrl(..., const UrlInfo& url_info
 
 ---
 
+## 零点六、🔴🔴 S 档的真实案情（2026-10-20 本人自述 + 教练全链路实查，当日重写）
+
+> **本节取代零点五里所有「机制推断」段落。** 10-20 上午教练凭 `site_info.cc` 里
+> `#ifdef ENABLE_IE_KERNEL` 那个分支讲了一整段 IE 内核机制，**那是别人的代码（fuyang 的改动），
+> 与本人提交无关，全部作废**。同日下午教练又把 bug 判成 OOPIF 跨进程合成，**同样作废**。
+> 两次同形态错误：**没查提交就讲机制**（「拿眼前文件状态当他的改动」第 3、4 次）。
+
+### 一、真实 bug（本人 10-20 17:4x 原话，未经教练加工）
+
+> 「我们有一个游戏平台，使用的 360 浏览器的 chrom 内核去渲染的页面，结果一个游戏页面在玩的过程中，
+> 出现了一部分区域被另一个区域遮挡的情况，排查可能是渲染顺序导致的，但是调试发现其中一个进程
+> 发现不了另外一个遮盖部分的控件，怀疑是两个不同进程导致的，所以做了这次修改。」
+
+**定性：NPAPI 插件（Flash）窗口遮挡**，不是 OOPIF 合成，不是 Site Isolation 本身出问题。
+`wyxz.wan.360.cn` 的游戏跑在 NPAPI 插件里；NPAPI 插件在 Windows 上是**独立原生窗口（HWND）**，
+不参与 Blink 图层合成。Blink 必须自己算「哪些 HTML 元素盖在插件窗口上」再在插件窗口上
+**抠洞（cutout）** —— 实现就在 `third_party/blink/renderer/core/exported/plugin_occlusion_support.cc`
+的 `GetPluginOcclusions` / `AddToOcclusions`。
+
+**真根因（fuyang `0787c66` 解掉的）**：`AddToOcclusions` 原来有一行
+`if (!renderer->HasNonZeroEffectiveOpacity()) { skip; }`
+—— 盖在插件上的 iframe / div 容器 **opacity 恰好为 0**，被当成「不可见」跳过，
+于是没抠洞，插件画面把那块 content 盖住了。
+**这是纯渲染层 bug，与进程模型无关。**
+
+### 二、本人的改动：`8beac32`（2025-11-19，19 文件 242+/37-）
+
+**只做一件事：新加一个 `parent_host` 参数，从最外层穿到最里层，用域名白名单关掉进程锁。**
+
+```
+RenderFrameHostImpl::CanCommitOriginAndUrl        ← 取 parent_host
+  GetMainFrame()->GetLastCommittedURL().host()      （仅非主框架）
+    → ChildProcessSecurityPolicyImpl::CanCommitOriginAndUrl(..., parent_host)
+      → CanCommitURL / CanAccessOrigin / CanAccessMaybeOpaqueOrigin
+        → SiteInfo::ShouldLockProcessToSite(..., parent_host)          site_info.cc:757
+          → ChromeContentBrowserClient::ShouldLockProcessToSite(..., parent_host)
+              判据：parent_host 或 effective_url.host() 以 "360.cn" 结尾 → return false
+
+另一路：SiteInstanceImpl::IsNavigationSameSite
+      → IsSuitableForUrlInfo(url_info, parent_host)
+      → RenderProcessHostImpl::IsSuitableHost(..., parent_host)
+
+硬编码白名单：SiteInstanceImpl::IsSameSite 里
+      if (src_url.host() == "wan.360.cn" || 以 ".wan.360.cn" 结尾) return true;
+```
+
+**他当时为什么加这个参数（本人 10-20 原话）**：「最里层获取不到主 host」——事实正确。
+
+### 三、真正的技术教训（这条比提交本身值钱）
+
+**fuyang 要的信息 `for_outermost_main_frame` 就在 `IsNavigationSameSite` 的形参里，
+而且那个函数里已有现成的两行（当时被 `#ifdef FOR_WINX86` 框着）。**
+
+| | 本人 `8beac32` | fuyang `0787c66`（11-25） |
+|---|---|---|
+| 判断依据 | 新加 `parent_host`，穿 6 层 | 复用已有 `for_outermost_main_frame`，不加参数 |
+| 范围 | 域名白名单硬编码 | 构建宏 `USE_360HACK` |
+| 规模 | 19 文件 242 行 | **3 文件 8 行** |
+| 结果 | 2 天后 Revert（`4d81f7c` 11-21） | 12-08 被 Revert（`6e40f03`，message 空，原因查不到） |
+
+→ **判据（本人 10-20 自己答对第①问）**：**一个判断需要你穿 6 层参数，先怀疑判断的位置选错了，
+而不是参数不够。** 往外层找一个天然持有该信息的切点。
+本人 17:4x 答「我会先尝试放开这里的宏，调试」——**与 fuyang `0787c66` 的做法一字不差**，
+说明直觉已有，缺的是「先去外层看一眼」这个动作。
+
+**本人 ② 问答对**：域名白名单是硬编码，新域名就要改代码重新发版（他自己看出的，教练只给了提示）。
+**本人 ③ 问答错**：猜「shangshihao 发现了更好的改法」。实际后续**没有更好的改法** ——
+`88c5bf18`（fuyang 2026-01-15，message「test for renderer」）是把两处宏**注释掉**，
+`ShouldLockProcessToSite` 恒返回 `true`，是调试提交不是修复。
+**HEAD（`84dafdec`）上 `need_check_opacity` / `wyxz.wan.360.cn` / `360.cn` 全部不存在。**
+
+### 四、🔴 时间线：这个问题到今天没有进主线的解法
+
+```
+2025-05-22  fuyang   插件抠洞 + x86 子框架合并          → Revert
+2025-11-19  本人     parent_host 穿 6 层 + 360.cn 白名单 → Revert（两天后）
+2025-11-25  fuyang   宏放宽 USE_360HACK（8 行）          → Revert（12-08，原因无记录）
+2026-01-15  fuyang   把宏注释掉「test for renderer」      → 调试提交
+2026-10-20  HEAD     need_check_opacity / wyxz / 360.cn 全部不存在
+```
+
+**所以简历/面试口径必须改**（本节推翻零点五的写法）：
+
+- ❌ 不说「我修了一个 bug」
+- ✅ 说「**定位了一类插件渲染与进程模型冲突的问题，提了方案，因侵入安全核心类被回滚；
+  后续团队三轮尝试同样未进主线**」
+- **③ 问那处答错暴露一个危险惯性**：他把「被否定」等同于「别人有更优解」。
+  事实是他和领导都没解决，这是社区级难题（`crbug.com/950453` 一类）。
+  这个惯性在面试里很致命——会让他把「难题未解」说成「我不够好」。
+
+### 五、⭐ 这件事真正改写了简历行的分量
+
+零点五里写的是「参与排障与定制」，现在有了**完整闭环 + 失败原因 + 同题对照**：
+定位（现象 → 怀疑进程）→ 方案（`parent_host` 穿链路）→ 被回滚原因（侵入 CPSPI 安全核心类，
+穿 6 层签名）→ 对照（fuyang 用已有形参 8 行搞定）→ 结局（三轮全被回滚，问题仍在）。
+
+**面试官最想听的不是「修好了」，是「你知道自己的方案错在哪」。** 这一节就是他错在哪的完整答案。
+
+
+---
+
 ## 一、他做过的 23 个功能提交 —— 按「面试可讲价值」分三档
 
 > ⚠️ 这张表是**排课依据**，不是简历。
