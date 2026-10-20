@@ -714,3 +714,75 @@ error LNK2019: 无法解析的外部符号 "public: __cdecl Test::~Test(void)"
 ```
 
 **判据：编译错误会掩盖链接错误。** 「编译不过」的文件里可能还藏着第二类问题，修完编译错误要再跑一次。
+
+---
+
+## 2026-10-20（周二 W7D2）· `std::thread` 传参与 `std::ref`
+
+### 四个实验的实测结果（`week-07/day2_thread_args.cpp`，教练实跑，MSVC x64 /std:c++17）
+
+| case | 形参 | 实参 | 编译 | 原变量 `a`（初值 1，线程内 ++ 10 次） |
+|---|---|---|---|---|
+| A | `int&` | `std::ref(a)` | `CL_EXIT=0` | **11，改到了** |
+| B | `int&` | `a` | **`CL_EXIT=2`** | — |
+| C | `int`（by value） | `std::ref(a)` | `CL_EXIT=0` | **1，没改到** |
+| D | `int`（by value） | `a` | `CL_EXIT=0` | 1，没改到 |
+
+B 的报错原文（`build\cl_B.txt`）：
+
+```
+include\thread(60): error C2672: "std::invoke": 未找到匹配的重载函数
+include\thread(60): note: "_Ty1=int"
+day2_thread_args.cpp(71): note: ... std::thread::thread<void(__cdecl &)(int &),int&,0>(_Fn,int &)
+```
+
+**`_Ty1=int`（不是 `int&`）就是 decay-copy 丢掉引用的直接证据** —— 编译器自己把它打出来了。
+
+### 机制：`std::ref` 失效的位置不在传递，在接收
+
+`std::thread t(f, a)` 的参数先被 **decay-copy** 存进线程对象内部（数组退化成指针、`const` 剥掉、
+**引用不保留**），线程启动时再以右值取出交给 `f`。所以形参 `int&` 绑不到那个右值副本 → B 编译失败。
+
+`std::ref(a)` 造一个 `reference_wrapper<int>`：它可拷贝（能穿过 decay-copy），
+又能隐式转回 `int&`。链条是：
+
+```
+线程内部存 reference_wrapper<int>
+  → 调用点隐式转换成 int&
+  → 形参类型决定最后一步：
+      int&  接 → 同一个对象，改得到（A）
+      int   接 → 从那个 int& 又拷一份，改的是副本（C）
+```
+
+**📌 本人 10-20 答对的那句**：「`std::ref` 保证传递过程中保留对原变量的引用，
+但最终是否复制，取决于函数的形参类型」。
+→ **`std::ref` 在 C 里没有失效**，它成功把引用送到了调用点；是 by-value 形参在最后一步吃掉了引用。
+`std::ref` 只负责「引用活过 decay-copy」这一段，不负责形参怎么接。
+
+### 📌 R1 第四层结清：四个析构挂点（本人 10-20 闭卷）
+
+| 挂点 | 位置 | 本人答案 |
+|---|---|---|
+| 局部变量 | 作用域 `}` | ✅ |
+| 临时量 | **完整表达式（full-expression）结束** | ✅ 第三版答对（前两版：①误举局部变量 ②只说「没变量接」没碰概念名） |
+| 堆对象 | `delete` 表达式，编译器不管 | ✅ |
+| 异常 | 栈展开（stack unwinding），逐层析构后才进 `catch` | ✅ |
+
+**临时量的寿命单位是完整表达式，不是「分号这个符号」** —— 举例：
+`f(make());` 里 `make()` 的返回值活到整条语句结束；
+而 `int a = make();` 里的 `a` 是局部变量，活到 `}`，**不是临时量的例子**（本人第一版栽在这里）。
+
+### ❗ 增量：`#if defined` 不能隔离「必须编译失败」的 case
+
+`cl` 编译的是**整个翻译单元**。`#if defined` 只决定 `main` 里调哪个函数，
+**所有函数体一律参与编译**。所以把实验 B（`int&` 无 `ref`，本就编不过）写成一个普通函数时，
+它会让 A/C/D 三个 case **全部** `CL_EXIT=2` —— 一个错误带死整个文件，另外三个 case 什么都测不出来。
+
+**本人 10-20 的解法（成立）**：把 B 的代码直接写进 `main` 的 `#elif defined(B)` 分支里，
+这样只有 `/DB` 那次编译会碰到它。另一种解法是把函数体也用 `#if` 包起来。
+
+### ❗ 增量：`cases.bat` 的第二个参数是运行次数，漏掉会静默吃掉第一个宏
+
+本人原命令 `cases.bat day2_thread_args.cpp CASE_JOIN CASE_DETACH_NOSLEEP ...` 漏了次数参数。
+结果日志头部出现 `RUNS : CASE_JOIN per case` —— **第一个宏被当成次数吃掉，那个 case 根本没跑**。
+→ 交卷前先看 log 第 3-4 行的 `RUNS:` / `CASES:` 是不是你想要的，这是零成本自检。
