@@ -244,6 +244,69 @@ RenderFrameHostImpl::CanCommitOriginAndUrl        ← 取 parent_host
 
 **面试官最想听的不是「修好了」，是「你知道自己的方案错在哪」。** 这一节就是他错在哪的完整答案。
 
+### 六、🔴 本人 10-20 18:2x 追问三条 —— 面试第二层，必须补的三个洞
+
+> 他的原话：「①你是怎么排查的，为什么说是跨进程了 ②怎么定位到哪里是判断 render 是否分进程启动的代码
+> ③这个问题最后就没有解决吗」。**三问全部是面试官的第二层追问，问得对。**
+
+#### ⚠️ 事实更正：`a6d8f64`（撤销 fuyang 插件改动）是本人自己提的 Revert
+
+`git log -1 --format="%an %ae %ad" a6d8f64f0bfa6` → **`ningxinyang@360.cn`，2025-12-04**。
+零点六第四节的时间线写成了「本人方案被回滚、fuyang 方案被回滚」，
+**漏了一条：本人在 12-04 回滚了 fuyang 5 月那条插件改动。** 这不是单向被否定，是双向来回。
+
+#### ③ 答案：没有解决，实查可核（HEAD = `84dafdec`）
+
+| 查的东西 | HEAD 上的状态 |
+|---|---|
+| `AddToOcclusions` 的 `need_check_opacity` 参数 | **不存在**。`plugin_occlusion_support.cc:474` 仍是原始的 `if (!renderer->HasNonZeroEffectiveOpacity()) { ... return; }` |
+| `wyxz.wan.360.cn` / `360.cn` 白名单 | **不存在** |
+| `IsNavigationSameSite` 里 `if (!for_outermost_main_frame) return true;` | **不存在** |
+| `git log --all -S "need_check_opacity"` | 只命中那几条 commit 与 Revert，**最终没留下** |
+| 2026 年之后碰过这两个文件的提交 | 只有 `096d4c9d`（xiehui「AI解决冲突第一轮」4 月）与 `59333b3a`（Chromium 154 快照导入 9 月）—— **都是升级合并，不是修这个 bug** |
+
+**→ 面试口径（直接用）**：「这个问题我们团队三轮方案都被回滚了，最后没有进主线的修复。
+根因在插件窗口的遮挡计算，但修它要么动安全核心类、要么全局关掉子框架隔离，代价都比收益大。
+后来 NPAPI 本身在退场，这个 case 就被搁置了。」
+
+#### ①② 教练**不能**替答 —— 边界写死
+
+commit message 只有「fix bug」四个字，Gerrit 内网页教练访问不了（`curl` 401）。
+**「他当时怎么排查的」「怎么定位到那段代码的」git 里没有任何记录。**
+→ ⛔ **教练不许编排查过程给他背**。今天已犯两次同类错误（教练账 3、4），不犯第三次。
+
+#### ① 的唯一线索：那个文件里有前人留的调试开关
+
+```cpp
+// plugin_occlusion_support.cc:54-56
+bool bEnableCutoutLog = false;
+bool bEnableCutoutLogDetail = false;
+
+// AddToOcclusions 内（474 行起）
+if (bEnableCutoutLog) {
+    printf("AddToOcclusions [%p %s rect %s] Opacity: 0, skipped\n",
+        renderer, renderer->DebugName()..., AbsoluteVisualRect(renderer)...);
+}
+```
+
+打开它，**每个被算进遮挡的元素、每个被 opacity 跳过的元素都会打出 `DebugName` + 矩形坐标**。
+→ **挂账（明天上午交）**：问他当时实际用的手段 —— 这类 printf 日志 /
+`chrome://process-internals` / DevTools Layers / attach 调试器看 HWND / 还是别的。
+**答「记不清」也收**，那就改成用方法论补事实空白（面试可接受
+「当时具体步骤记不清，但这类问题我现在的排查路径是……」，不接受编细节）。
+
+#### ② 教练给的是「以后怎么定位」，不是「你当时怎么定位的」
+
+| 手法 | 做法 | 对应本案 |
+|---|---|---|
+| **① 从行为反查判据** | `chrome://process-internals` 列出每个 `SiteInstance` / `ProcessLock` / 所属进程。页面行为变了但不知哪行代码管 → 先找那个页面能看到的量 | 能直接看出游戏页和 iframe 是否同进程 |
+| **② 从宏反查定制点** 🔴 | 360 定制全被宏包着：`USE_360HACK` / `FOR_360SE` / `FOR_WINX86` / `ENABLE_IE_KERNEL`。`grep <宏> + <子系统关键词>` 直接命中前人改过的位置 | **当时 grep `USE_360HACK` + `site_instance` 就会看到 fuyang 留的那两行** —— 信息本来就在仓库里，缺的是「先 grep 宏」这个动作 |
+| **③ 从 Revert 链反查雷区** | `git log --all --grep="<关键词>"` 看这主题改过几轮、回滚几次。回滚多 = 问题真难 + 你的改动也会被回滚 | 本案 `--grep="opt for plugins"` 直接看出 fuyang 五月起已来回三轮 |
+
+**②这条是本案真正的方法论收获**，与第三节「一个判断要穿 6 层参数，先怀疑位置选错」同一根：
+**都是「先往外/往前看一眼」，而不是从自己站的地方硬往里凿。**
+
+
 
 ---
 
