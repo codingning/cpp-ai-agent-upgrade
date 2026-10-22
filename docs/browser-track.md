@@ -648,3 +648,47 @@ done
 - `components/download/` 他改过 3 个提交（含两个 Revert）→ 下载模块的线程模型是现成的第三层教材
 - `se_browser_mixin.cc` 的 "mixin" 命名 —— Chromium 里 mixin 是什么模式，待确认后再出题
 - ⚠️ **教练未验证项**：本人自述「全编 4-5 小时」未实测（他的机器、他的实感，**采信不复验**）
+
+---
+
+## 八、🔴 事实更正（2026-10-22 · 本人实查推翻教练断言）
+
+### 更正 1 · integrity level 表里「utility = Medium」是教练写错的
+
+10-21 23:xx 我（教练）给的那张表写着「network / utility | Medium」，把 utility 整个进程类型
+标成了 Medium。**本人 10-22 上午查源码推翻。实查结论（已逐字核对，可复现）：**
+
+`src/docs/design/sandbox.md:283-285` 原文：
+> "At M75 the browser, crash handler, and **network** utility processes run at Medium integrity,
+> the GPU process at Low and most remaining services including isolated renderers at Untrusted."
+
+- Medium 只点了 **network utility 这一个 service**，不是整个 utility 进程类型。
+- **utility 是「进程类型」的名字，不是一个权限等级。** 同一个进程类型里承载不同 service，
+  每个 service 各自声明自己的沙箱类型（mojom 里的 `[ServiceSandbox=...]` 注解）。
+- `src/chrome/common/importer/profile_import.mojom:88` →
+  `[ServiceSandbox=sandbox.mojom.Sandbox.kNoSandbox]`
+  书签导入这个 service **根本没有沙箱**，比 Medium 还宽，也比 GPU（Low）宽得多。
+- 文档里同句话的 "most remaining services ... at Untrusted" 说明：
+  **多数 service 是 Untrusted**，Medium 是例外不是常态。
+
+👉 讲法：面试里不能说「utility 进程是 Medium」。要说「utility 是进程类型，
+沙箱按 service 粒度声明，network service 是 Medium，profile import 是 kNoSandbox，
+多数 service 是 Untrusted」。
+
+### 更正 2 · 「代码是我们写的所以安全」这个解释不成立（本人自己反掉的）
+
+本人 10-22 原话（采纳）：「恶意数据也可能利用解析漏洞，把原本可信的程序变成攻击者控制的程序，
+所以『代码是我们写的』不足以解释 Medium。」—— 正确。输入不可信就意味着解析器是攻击面，
+与解析器由谁编写无关。**这条推理要保留进面试话术，它比记住等级表值钱。**
+
+### 本人尚未答出的那一问（挂到 W8）
+
+为什么这个 service 能配 kNoSandbox / 沙箱化会死在哪 —— 要落到具体系统调用上，不是落到「配置如此」。
+实查到的证据（教练 10-22 实跑 grep，行号可核）：
+- `chrome/utility/importer/ie_importer_win.cc:252, 554, 607, 618`
+  → `base::win::RegKey` 直开 `HKEY_CURRENT_USER` / `HKEY_LOCAL_MACHINE`
+- `chrome/utility/importer/firefox_importer.cc:648-657`
+  → 从**别的浏览器的 profile 目录** `base::CopyFile` 出 `places.sqlite` 等文件
+- 对照 `src/docs/design/sandbox.md:419-433`（App Container / Low Box token）：
+  低权限 token 只剩 `SeChangeNotifyPrivilege` + `SeIncreaseWorkingSetPrivilege`，
+  且不给 Capability 就**连网络都访问不了** → 读任意注册表键、读任意用户目录文件都做不到。
