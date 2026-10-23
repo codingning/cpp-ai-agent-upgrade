@@ -791,3 +791,46 @@ day2_thread_args.cpp(71): note: ... std::thread::thread<void(__cdecl &)(int &),i
 本人原命令 `cases.bat day2_thread_args.cpp CASE_JOIN CASE_DETACH_NOSLEEP ...` 漏了次数参数。
 结果日志头部出现 `RUNS : CASE_JOIN per case` —— **第一个宏被当成次数吃掉，那个 case 根本没跑**。
 → 交卷前先看 log 第 3-4 行的 `RUNS:` / `CASES:` 是不是你想要的，这是零成本自检。
+
+---
+
+## 2026-10-23（W7D5）增量 · `mutex` / `lock_guard` / 测试的证明力
+
+### ✅ `std::mutex` 与 `std::lock_guard`（本日新学，双方实跑验过）
+
+| 概念 | 内容 | 证据 |
+|---|---|---|
+| `std::mutex` | 一把锁。`lock()` 占住，别的线程走到 `lock()` **停在那里等**；`unlock()` 放开。头文件 `<mutex>` | — |
+| `std::lock_guard<std::mutex>` | RAII 封装：构造时 `lock()`、析构时 `unlock()`，**活着 = 锁着**。没有 `lock()`/`unlock()` 成员 | — |
+| **`lock_guard` 没有运行时额外开销** | 它编译出来就是 lock/unlock，RAII 只把 unlock 挂在析构上 | 本人 GUARD 54/55ms；教练同机 GUARD 54/55/55ms、LOCK 52/52/53ms，**三组对齐** |
+| 真正的开销在「有锁 vs 无锁」 | `RAW 5ms` → `LOCK 54ms`，**约 10 倍** | `build\cases-day5_mutex.log`（11:06，CL_EXIT=0，三 case 各 5 次 exits 全 0） |
+
+### ❗ `mutex` 保证的是**互斥**，不是**排序**（本人 10-23 A4 第一问写成「控制线程的执行顺序」）
+
+加了锁之后**谁先谁后依然由 OS 调度决定**，它保证的只是「同一时刻只有一个线程在那段代码里」。
+这个区别在读 Chromium 的 `base::Lock`（只给互斥）对 `SequencedTaskRunner`（才给顺序）时会直接撞上。
+
+### ❗ 实验设计：对照组不成立比「量没分辨力」更隐蔽（本日第一版）
+
+第一版 `CASE_GUARD` 把 `std::lock_guard` 建在 `for` **外面**，整个 200 万次循环在一把锁里。
+那不是「`lock_guard` 对 手写 lock/unlock」的对照组，而是「**加锁 1 次** 对 **加锁 400 万次**」——
+两个线程被做成了串行，于是跑出 6ms，看起来像「`lock_guard` 快 8 倍」。
+**那 8 倍是实验设计造出来的，不是 `mutex` 的性质。**
+→ 自检一句：**我这两个 case 之间，除了我想测的那一个差别，还有别的差别吗？**
+
+### 🏆 本人 10-23 自己写出的判据：测试只能证伪，不能证明正确
+
+本人原话（11:21）：「可能的交错有无数种，全对排除了每次运行必出错，**没排除掉未遇到的交错会出错**」。
+
+`data race` 的正确判据**不是**「跑多少次都对」，而是这两条：
+1. 用工具查内存访问序（ThreadSanitizer 做这件事）；
+   ⚠️ **Windows + MSVC 下不可用** —— 教练 10-22 实测 clang-cl 19.1.5（VS2022 自带）报
+   `unsupported option '-fsanitize=thread' for target x86_64-pc-windows-msvc`，MSVC 只有 `/fsanitize=address`。
+2. **从代码上证明**：这块数据的每次访问都在同一把锁里，或者它是 `atomic`。（静态，不依赖运行）
+
+实物证据：`CASE_RAW` 连跑五次 `lost` = `1977859 / 1935843 / 1998563 / 1886761 / 1559523`，
+**没有两次相同**。同一个 exe、一个字没改 —— 结果由线程实际交错决定，交错由 OS 调度决定。
+
+> 配套已有的两条（10-21 / 10-22）：**`lost == 0` 不能当判据**，因为 lost 的大小由**编译器把窗口开多宽**
+> 决定（`/O2` 把循环消成一条 `add`，窗口从 200 万次缩成 1 次，50 次里 49 次 `lost=0`）；
+> 以及「别人递给你的量，默认当诱饵看」——这里的「别人」是编译器。
