@@ -343,9 +343,45 @@ Q3（utility vs renderer，各自的外来东西是什么，为什么权限不�
 
 ```
 B2（为什么不在 render 进程直接写文件）：
-  · render 的 integrity level / 输入来自哪 / 有没有写任意路径的权限：
+  本人原话：「render 进程的 integrity level 是 Untrusted，他处理的是网页的 js 代码，
+  在沙箱里，他是算在 Chromium 威胁模型内的，所以它有没有写任意路径文件的权限，
+  如果真让 render 直接写，一个被攻破的网页能破坏文件，窃取信息，留下后门等」
 
-  · 如果真让 render 直接写，一个被攻破的网页能干什么：
+  ✅ 对的部分：Untrusted 这个等级名、处理网页 JS、三类后果（破坏文件/窃取信息/留后门）。
+     教练实查核对（E:\coderowser\src）：
+       docs/design/sandbox.md:283-285 原文 ——
+       "At M75 the browser, crash handler, and network utility processes run at Medium
+        integrity, the GPU process at Low and most remaining services including
+        isolated renderers at Untrusted."
+       他记的行号准确。
+
+  ❌ 错一：「他是算在 Chromium 威胁模型**内**的」—— **反了**。
+     renderer 在威胁模型里是**不可信的那一方**，被假定**已经被攻破**。
+     整个沙箱的前提就是「renderer 迟早会被攻破」。它不是被保护的对象，是**被防范的对象**。
+     ⚠️ 与同日 Q3「顺序讲反」同源：都把 renderer 当成「自己人」。本日第 2 次。
+
+  ❌ 错二：把「在沙箱里」当成理由 —— **09-19 那个坑的原样复现**（手段当理由）。
+     沙箱不是 renderer 不能写文件的**原因**，是**实施这个限制的工具**。正确因果链：
+       renderer 跑任意网站的任意 JS（外来、不可控）
+         → 假定它会被攻破
+         → 所以不能给它写文件的权限
+         → 怎么落实这个「不给」？→ 用沙箱 + Untrusted integrity level
+     他把最后一步当成了第一步。
+
+  📌 追加题（验是否顺着答）：sandbox_win.cc:296-297 同一进程为何设两个 integrity level？
+       config->SetDelayedIntegrityLevel(INTEGRITY_LEVEL_UNTRUSTED);  // :296
+       config->SetIntegrityLevel(INTEGRITY_LEVEL_LOW);               // :297
+     本人答：**「不知道」**（✅ 如实说，没编 —— 这是对的反应）
+     按 09-28 顺序铁律，教练直接讲定义：
+       · SetIntegrityLevel(LOW)              = **初始**等级，进程一创建就生效
+       · SetDelayedIntegrityLevel(UNTRUSTED) = **延迟**等级，初始化完、真正干活前才降下去
+     为什么不一上来就 Untrusted：renderer 刚启动时还得加载 DLL、读自己的可执行文件、
+     建立与 browser 的 IPC 通道 —— Untrusted 连这些都干不了，一上来就设进程起不来。
+     策略：先给勉强够用的 Low 完成初始化，**在跑不可信代码之前**一刀砍到 Untrusted。
+     🔴 关键在那一刀落下的时机：**在任何一行网页 JS 被执行之前。**
+        启动阶段跑的全是 Chromium 自己的代码（可信），降级之后才开始跑别人的代码（不可信）。
+        Delayed 不是「忘了设」，是**精确卡在信任边界翻转的那一刻**。
+     📌 本条为教练直接讲授，**未经他闭卷验证**，不计掌握。下次复测必考。
 
 ```
 
